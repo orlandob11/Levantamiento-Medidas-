@@ -230,7 +230,7 @@ class LevantamientoLinea(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'levantamiento.linea.log',
             'view_mode': 'form',
-            'target': 'new',
+            'target': 'current',
             'context': {'default_linea_id': self.id},
         }
 
