@@ -363,13 +363,21 @@
                     </group>
                     <group string="Medidas">
                         <group>
-                            <label for="ancho"/>
-                            <div class="o_row">
-                                <field name="ancho" class="oe_inline"/>
-                                <field name="uom_id" class="oe_inline" options="{'no_create': True}"/>
+                            <field name="uom_id" options="{'no_create': True}"/>
+                            <div class="row g-2 mb-2">
+                                <div class="col-12 col-sm-4">
+                                    <label for="ancho" class="o_form_label"/>
+                                    <field name="ancho" class="w-100"/>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <label for="alto" class="o_form_label"/>
+                                    <field name="alto" class="w-100"/>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <label for="profundidad" class="o_form_label"/>
+                                    <field name="profundidad" class="w-100"/>
+                                </div>
                             </div>
-                            <field name="alto"/>
-                            <field name="profundidad"/>
                         </group>
                         <group>
                             <field name="ancho_m" readonly="1"/>
@@ -382,6 +390,11 @@
                         <field name="notas"/>
                     </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>

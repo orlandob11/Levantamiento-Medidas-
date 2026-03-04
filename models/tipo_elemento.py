@@ -6,6 +6,7 @@ from odoo import api, fields, models, _
 class LevantamientoTipoElemento(models.Model):
     _name = 'levantamiento.tipo.elemento'
     _description = 'Tipo de Elemento para Levantamiento'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'sequence, name'
 
     name = fields.Char(

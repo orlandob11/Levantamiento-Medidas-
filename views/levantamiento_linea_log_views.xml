@@ -49,18 +49,37 @@
                                placeholder="Describe en detalle el evento, qué ocurrió, cómo se resolvió, etc."/>
                     </group>
 
-                    <!-- Costo -->
-                    <group string="Costo Asociado" col="4">
-                        <field name="costo"/>
-                        <field name="currency_id" groups="base.group_multi_currency"/>
-                    </group>
+                    <notebook>
+                        <!-- Tab Costos -->
+                        <page string="Costos" name="costos">
+                            <field name="costo_ids">
+                                <tree editable="bottom">
+                                    <field name="descripcion"/>
+                                    <field name="cantidad"/>
+                                    <field name="precio_unitario"/>
+                                    <field name="subtotal" readonly="1" sum="Total"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="costo_total" string="Costo Total" readonly="1"/>
+                                <field name="currency_id" groups="base.group_multi_currency" readonly="1"/>
+                            </group>
+                        </page>
 
-                    <!-- Fotos -->
-                    <group string="Fotos del Evento" col="2">
-                        <field name="image_1" widget="image" class="oe_avatar"/>
-                        <field name="image_2" widget="image" class="oe_avatar"/>
-                    </group>
+                        <!-- Tab Fotos -->
+                        <page string="Fotos" name="fotos">
+                            <group col="2">
+                                <field name="image_1" widget="image" class="oe_avatar"/>
+                                <field name="image_2" widget="image" class="oe_avatar"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -191,14 +210,20 @@
                             <field name="fecha" readonly="1"/>
                         </group>
                         <group string="Medidas">
-                            <label for="ancho"/>
-                            <div class="o_row">
-                                <field name="ancho" class="oe_inline"/>
-                                <span>x</span>
-                                <field name="alto" class="oe_inline"/>
-                                <span>x</span>
-                                <field name="profundidad" class="oe_inline"/>
-                                <field name="uom_id" class="oe_inline"/>
+                            <field name="uom_id" options="{'no_create': True}"/>
+                            <div class="row g-2 mb-2">
+                                <div class="col-12 col-sm-4">
+                                    <label for="ancho" class="o_form_label"/>
+                                    <field name="ancho" class="w-100"/>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <label for="alto" class="o_form_label"/>
+                                    <field name="alto" class="w-100"/>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <label for="profundidad" class="o_form_label"/>
+                                    <field name="profundidad" class="w-100"/>
+                                </div>
                             </div>
                             <field name="cantidad"/>
                             <field name="area_ft2" readonly="1"/>

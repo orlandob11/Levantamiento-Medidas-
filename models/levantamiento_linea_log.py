@@ -6,6 +6,7 @@ from odoo import models, fields, api
 class LevantamientoLineaLog(models.Model):
     _name = 'levantamiento.linea.log'
     _description = 'Historial de Línea de Medidas'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'fecha desc, id desc'
     _rec_name = 'resumen'
 
@@ -84,6 +85,19 @@ class LevantamientoLineaLog(models.Model):
         default=lambda self: self.env.company.currency_id,
     )
 
+    # Líneas de costos
+    costo_ids = fields.One2many(
+        'levantamiento.evento.costo',
+        'log_id',
+        string='Costos',
+    )
+    costo_total = fields.Float(
+        string='Costo Total',
+        compute='_compute_costo_total',
+        store=True,
+        digits=(10, 2),
+    )
+
     # Fotos del evento
     image_1 = fields.Image(
         string='Foto 1',
@@ -99,6 +113,11 @@ class LevantamientoLineaLog(models.Model):
     # -------------------------------------------------------------------------
     # COMPUTE / DISPLAY
     # -------------------------------------------------------------------------
+
+    @api.depends('costo_ids.subtotal')
+    def _compute_costo_total(self):
+        for record in self:
+            record.costo_total = sum(record.costo_ids.mapped('subtotal'))
 
     def name_get(self):
         result = []
