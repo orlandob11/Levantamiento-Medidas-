@@ -249,6 +249,21 @@ class LevantamientoMedida(models.Model):
         """Volver a borrador"""
         self.write({'state': 'borrador'})
 
+    def action_add_linea_fullscreen(self):
+        """Crear línea de medida en pantalla completa"""
+        self.ensure_one()
+        return {
+            'name': _('Nueva Línea de Medida'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'levantamiento.linea',
+            'view_mode': 'form',
+            'view_id': self.env.ref('levantamiento_medidas.view_levantamiento_linea_form_detail').id,
+            'target': 'current',
+            'context': {
+                'default_levantamiento_id': self.id,
+            },
+        }
+
     def action_ver_adjuntos(self):
         """Abrir adjuntos del chatter"""
         self.ensure_one()

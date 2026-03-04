@@ -94,7 +94,7 @@
                         <page string="Medidas" name="medidas">
                             <field name="linea_ids" widget="one2many"
                                    options="{'no_open': True}">
-                                <tree editable="bottom" no_open="1">
+                                <tree no_open="1" create="0">
                                     <field name="sequence" widget="handle"/>
                                     <field name="tipo_elemento_id"/>
                                     <field name="ubicacion"/>
@@ -121,6 +121,11 @@
                                             class="btn-link"/>
                                 </tree>
                             </field>
+
+                            <div class="text-center mt-3">
+                                <button name="action_add_linea_fullscreen" type="object"
+                                        string="+ Agregar Medida Detallada" class="btn-link"/>
+                            </div>
 
                             <group class="oe_subtotal_footer">
                                 <field name="linea_count" string="Total de Elementos"/>

@@ -249,7 +249,7 @@
 
                         <page string="Historial de Eventos" name="historial">
                             <field name="log_ids" mode="tree" options="{'no_open': True}">
-                                <tree string="Eventos" default_order="fecha desc" editable="bottom" no_open="1">
+                                <tree string="Eventos" default_order="fecha desc" no_open="1" create="0">
                                     <field name="fecha"/>
                                     <field name="tipo"/>
                                     <field name="resumen"/>
