@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =================================================================== -->
+    <!-- LEVANTAMIENTO.TIPO.ELEMENTO VIEWS -->
+    <!-- =================================================================== -->
+
+    <!-- Form View -->
+    <record id="view_levantamiento_tipo_elemento_form" model="ir.ui.view">
+        <field name="name">levantamiento.tipo.elemento.form</field>
+        <field name="model">levantamiento.tipo.elemento</field>
+        <field name="arch" type="xml">
+            <form string="Tipo de Elemento">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Nombre del tipo de elemento..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="color" widget="color_picker"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="descripcion" placeholder="Descripción del tipo de elemento..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_levantamiento_tipo_elemento_tree" model="ir.ui.view">
+        <field name="name">levantamiento.tipo.elemento.tree</field>
+        <field name="model">levantamiento.tipo.elemento</field>
+        <field name="arch" type="xml">
+            <tree string="Tipos de Elementos" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="descripcion" optional="show"/>
+                <field name="active" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_levantamiento_tipo_elemento_search" model="ir.ui.view">
+        <field name="name">levantamiento.tipo.elemento.search</field>
+        <field name="model">levantamiento.tipo.elemento</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Tipos de Elementos">
+                <field name="name"/>
+                <field name="code"/>
+                <separator/>
+                <filter name="filter_inactive" string="Archivados"
+                        domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_levantamiento_tipo_elemento" model="ir.actions.act_window">
+        <field name="name">Tipos de Elementos</field>
+        <field name="res_model">levantamiento.tipo.elemento</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_levantamiento_tipo_elemento_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo tipo de elemento
+            </p>
+            <p>
+                Configure los tipos de elementos que se pueden medir:
+                cristales, vallas, letreros, banners, etc.
+            </p>
+        </field>
+    </record>
+
+    <!-- =================================================================== -->
+    <!-- CONFIGURATION MENU -->
+    <!-- =================================================================== -->
+
+    <!-- Configuration Submenu -->
+    <menuitem id="menu_levantamiento_config"
+              name="Configuración"
+              parent="menu_levantamiento_root"
+              sequence="100"
+              groups="levantamiento_medidas.group_levantamiento_manager"/>
+
+    <menuitem id="menu_levantamiento_tipo_elemento"
+              name="Tipos de Elementos"
+              parent="menu_levantamiento_config"
+              action="action_levantamiento_tipo_elemento"
+              sequence="10"/>
+
+</odoo>

@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =================================================================== -->
+    <!-- LEVANTAMIENTO.MEDIDA VIEWS -->
+    <!-- =================================================================== -->
+
+    <!-- Form View -->
+    <record id="view_levantamiento_medida_form" model="ir.ui.view">
+        <field name="name">levantamiento.medida.form</field>
+        <field name="model">levantamiento.medida</field>
+        <field name="arch" type="xml">
+            <form string="Levantamiento de Medidas">
+                <header>
+                    <!-- Botones de acción según estado -->
+                    <button name="action_confirmar_medidas" type="object"
+                            string="Confirmar Medidas" class="btn-primary"
+                            invisible="state != 'borrador'"/>
+                    <button name="action_enviar_produccion" type="object"
+                            string="Enviar a Producción" class="btn-primary"
+                            invisible="state != 'medido'"/>
+                    <button name="action_iniciar_instalacion" type="object"
+                            string="Iniciar Instalación" class="btn-primary"
+                            invisible="state != 'en_produccion'"/>
+                    <button name="action_marcar_instalado" type="object"
+                            string="Marcar Instalado" class="btn-primary"
+                            invisible="state != 'en_instalacion'"/>
+                    <button name="action_cerrar" type="object"
+                            string="Cerrar" class="btn-success"
+                            invisible="state != 'instalado'"/>
+
+                    <!-- Botones secundarios -->
+                    <button name="action_cancelar" type="object"
+                            string="Cancelar" class="btn-secondary"
+                            invisible="state in ('cerrado', 'cancelado')"/>
+                    <button name="action_restablecer_borrador" type="object"
+                            string="Restablecer a Borrador" class="btn-secondary"
+                            invisible="state not in ('cancelado', 'medido')"/>
+
+                    <!-- Botón imprimir -->
+                    <button name="%(action_report_levantamiento_medida)d" type="action"
+                            string="Imprimir" class="btn-secondary" icon="fa-print"/>
+
+                    <!-- Statusbar -->
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="borrador,medido,en_produccion,en_instalacion,instalado,cerrado"/>
+                </header>
+
+                <sheet>
+                    <!-- Botones inteligentes -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_ver_adjuntos" type="object"
+                                class="oe_stat_button" icon="fa-paperclip"
+                                invisible="attachment_count == 0">
+                            <field name="attachment_count" widget="statinfo" string="Adjuntos"/>
+                        </button>
+                    </div>
+
+                    <!-- Prioridad y título -->
+                    <widget name="web_ribbon" title="Cancelado" bg_color="text-bg-danger"
+                            invisible="state != 'cancelado'"/>
+                    <widget name="web_ribbon" title="Cerrado" bg_color="text-bg-success"
+                            invisible="state != 'cerrado'"/>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1" class="oe_inline"/>
+                            <field name="priority" widget="priority" class="ms-2"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group name="cliente_info" string="Información del Cliente">
+                            <field name="cliente_id"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="sucursal_id"
+                                   options="{'no_create_edit': False, 'no_open': False}"
+                                   context="{'default_parent_id': cliente_id, 'default_type': 'delivery', 'default_is_company': False}"/>
+                            <field name="direccion_trabajo" readonly="1"/>
+                        </group>
+                        <group name="fechas_responsables" string="Fechas y Responsables">
+                            <field name="fecha"/>
+                            <field name="responsable_id"/>
+                            <field name="fecha_instalacion"
+                                   invisible="state not in ('en_instalacion', 'instalado', 'cerrado')"/>
+                            <field name="instalador_id"
+                                   invisible="state not in ('en_instalacion', 'instalado', 'cerrado')"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <!-- Pestaña de Líneas de Medidas -->
+                        <page string="Medidas" name="medidas">
+                            <field name="linea_ids" widget="one2many"
+                                   context="{'form_view_ref': 'levantamiento_medidas.view_levantamiento_linea_form_detail'}">
+                                <tree>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="tipo_elemento_id"/>
+                                    <field name="ubicacion"/>
+                                    <field name="ancho"/>
+                                    <field name="alto"/>
+                                    <field name="profundidad" optional="hide"/>
+                                    <field name="uom_id"/>
+                                    <field name="cantidad"/>
+                                    <field name="area_ft2" readonly="1" sum="Total Área"/>
+                                    <field name="area_total_ft2" readonly="1" sum="Total"/>
+                                    <field name="estado_linea" widget="badge"
+                                           decoration-info="estado_linea == 'pendiente'"
+                                           decoration-warning="estado_linea == 'en_proceso'"
+                                           decoration-success="estado_linea == 'instalado'"
+                                           decoration-danger="estado_linea == 'con_incidencia'"
+                                           optional="show"/>
+                                    <field name="log_count" string="Eventos" optional="show"/>
+                                    <field name="notas" optional="hide"/>
+                                    <button name="action_add_log" type="object"
+                                            title="Registrar Evento" icon="fa-plus-circle"
+                                            class="btn-link"/>
+                                </tree>
+                            </field>
+
+                            <group class="oe_subtotal_footer">
+                                <field name="linea_count" string="Total de Elementos"/>
+                            </group>
+                        </page>
+
+                        <!-- Pestaña de Fotos (desde Chatter) -->
+                        <page string="Fotos" name="fotos">
+                            <div class="alert alert-info" role="alert">
+                                <i class="fa fa-info-circle"/> Las fotos se agregan desde el <strong>Chatter</strong> (sección de mensajes a la derecha).
+                                Haz clic en el ícono de clip 📎 para adjuntar imágenes.
+                            </div>
+                            <field name="image_ids" mode="kanban" readonly="1">
+                                <kanban>
+                                    <field name="id"/>
+                                    <field name="name"/>
+                                    <field name="mimetype"/>
+                                    <field name="create_date"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click o_kanban_attachment">
+                                                <div class="o_kanban_image">
+                                                    <img t-att-src="'/web/image/' + record.id.raw_value + '?width=256&amp;height=256'"
+                                                         class="img-fluid" style="max-height: 150px;"/>
+                                                </div>
+                                                <div class="o_kanban_details mt-2">
+                                                    <strong><field name="name"/></strong>
+                                                    <div class="text-muted small"><field name="create_date"/></div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+
+                        <!-- Pestaña de Notas -->
+                        <page string="Notas e Incidencias" name="notas">
+                            <group>
+                                <field name="notas_levantamiento"
+                                       placeholder="Notas del levantamiento de medidas..."/>
+                            </group>
+                            <group invisible="state in ('borrador', 'medido')">
+                                <field name="notas_instalacion"
+                                       placeholder="Notas de la instalación..."/>
+                            </group>
+                            <group invisible="state in ('borrador', 'medido')">
+                                <field name="incidencias"
+                                       placeholder="Incidencias encontradas durante la instalación..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_levantamiento_medida_tree" model="ir.ui.view">
+        <field name="name">levantamiento.medida.tree</field>
+        <field name="model">levantamiento.medida</field>
+        <field name="arch" type="xml">
+            <tree string="Levantamientos de Medidas"
+                  decoration-info="state == 'borrador'"
+                  decoration-warning="state == 'en_instalacion'"
+                  decoration-success="state in ('instalado', 'cerrado')"
+                  decoration-muted="state == 'cancelado'"
+                  multi_edit="1">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="sucursal_id" optional="show"/>
+                <field name="fecha"/>
+                <field name="responsable_id" widget="many2one_avatar_user"/>
+                <field name="linea_count" string="Elementos"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'borrador'"
+                       decoration-primary="state == 'medido'"
+                       decoration-warning="state in ('en_produccion', 'en_instalacion')"
+                       decoration-success="state in ('instalado', 'cerrado')"
+                       decoration-danger="state == 'cancelado'"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_levantamiento_medida_kanban" model="ir.ui.view">
+        <field name="name">levantamiento.medida.kanban</field>
+        <field name="model">levantamiento.medida</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column"
+                    on_create="quick_create" quick_create_view="levantamiento_medidas.view_levantamiento_medida_form_quick_create"
+                    records_draggable="true" group_delete="false" group_create="false">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="sucursal_id"/>
+                <field name="fecha"/>
+                <field name="responsable_id"/>
+                <field name="linea_count"/>
+                <field name="attachment_count"/>
+                <field name="state"/>
+                <field name="color"/>
+                <field name="priority"/>
+                <progressbar field="state" colors='{"borrador": "muted", "medido": "info", "en_produccion": "warning", "en_instalacion": "warning", "instalado": "success", "cerrado": "success", "cancelado": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click #{!selection_mode ? 'p-2' : ''}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <field name="priority" widget="priority"/>
+                            </div>
+                            <div class="o_kanban_record_subtitle mb-1">
+                                <field name="cliente_id"/>
+                            </div>
+                            <div t-if="record.sucursal_id.value" class="text-muted small mb-1">
+                                <i class="fa fa-map-marker me-1"/>
+                                <field name="sucursal_id"/>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <div class="text-muted small">
+                                    <i class="fa fa-calendar me-1"/>
+                                    <field name="fecha"/>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <span t-if="record.linea_count.raw_value" class="badge text-bg-secondary">
+                                        <i class="fa fa-ruler me-1"/>
+                                        <field name="linea_count"/>
+                                    </span>
+                                    <span t-if="record.attachment_count.raw_value" class="badge text-bg-secondary">
+                                        <i class="fa fa-paperclip me-1"/>
+                                        <field name="attachment_count"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-2">
+                                <field name="responsable_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Quick Create Form for Kanban -->
+    <record id="view_levantamiento_medida_form_quick_create" model="ir.ui.view">
+        <field name="name">levantamiento.medida.form.quick_create</field>
+        <field name="model">levantamiento.medida</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="cliente_id" options="{'no_create': True}"/>
+                    <field name="sucursal_id" options="{'no_create': True}"/>
+                    <field name="fecha"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_levantamiento_medida_search" model="ir.ui.view">
+        <field name="name">levantamiento.medida.search</field>
+        <field name="model">levantamiento.medida</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Levantamientos">
+                <field name="name"/>
+                <field name="cliente_id"/>
+                <field name="sucursal_id"/>
+                <field name="responsable_id"/>
+                <separator/>
+                <filter name="filter_my" string="Mis Levantamientos"
+                        domain="[('responsable_id', '=', uid)]"/>
+                <separator/>
+                <filter name="filter_borrador" string="Borrador"
+                        domain="[('state', '=', 'borrador')]"/>
+                <filter name="filter_medido" string="Medido"
+                        domain="[('state', '=', 'medido')]"/>
+                <filter name="filter_en_produccion" string="En Producción"
+                        domain="[('state', '=', 'en_produccion')]"/>
+                <filter name="filter_en_instalacion" string="En Instalación"
+                        domain="[('state', '=', 'en_instalacion')]"/>
+                <filter name="filter_instalado" string="Instalado"
+                        domain="[('state', '=', 'instalado')]"/>
+                <filter name="filter_cerrado" string="Cerrado"
+                        domain="[('state', '=', 'cerrado')]"/>
+                <filter name="filter_cancelado" string="Cancelado"
+                        domain="[('state', '=', 'cancelado')]"/>
+                <separator/>
+                <filter name="filter_this_month" string="Este Mes"
+                        domain="[('fecha', '>=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                 ('fecha', '&lt;', (context_today() + relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_this_year" string="Este Año"
+                        domain="[('fecha', '>=', (context_today() - relativedelta(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_by_cliente" string="Cliente"
+                            context="{'group_by': 'cliente_id'}"/>
+                    <filter name="group_by_sucursal" string="Sucursal"
+                            context="{'group_by': 'sucursal_id'}"/>
+                    <filter name="group_by_responsable" string="Responsable"
+                            context="{'group_by': 'responsable_id'}"/>
+                    <filter name="group_by_state" string="Estado"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_by_fecha" string="Fecha"
+                            context="{'group_by': 'fecha:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- =================================================================== -->
+    <!-- LEVANTAMIENTO.LINEA VIEWS -->
+    <!-- =================================================================== -->
+
+    <!-- Form View for Lines -->
+    <record id="view_levantamiento_linea_form" model="ir.ui.view">
+        <field name="name">levantamiento.linea.form</field>
+        <field name="model">levantamiento.linea</field>
+        <field name="arch" type="xml">
+            <form string="Línea de Medidas">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="levantamiento_id" invisible="1"/>
+                            <field name="tipo_elemento_id" options="{'no_open': True}"/>
+                            <field name="ubicacion"/>
+                            <field name="cantidad"/>
+                        </group>
+                        <group>
+                            <field name="image_1920" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+                    <group string="Medidas">
+                        <group>
+                            <label for="ancho"/>
+                            <div class="o_row">
+                                <field name="ancho" class="oe_inline"/>
+                                <field name="uom_id" class="oe_inline" options="{'no_create': True}"/>
+                            </div>
+                            <field name="alto"/>
+                            <field name="profundidad"/>
+                        </group>
+                        <group>
+                            <field name="ancho_m" readonly="1"/>
+                            <field name="alto_m" readonly="1"/>
+                            <field name="area_ft2" readonly="1"/>
+                            <field name="area_total_ft2" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notas"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View for Lines -->
+    <record id="view_levantamiento_linea_tree" model="ir.ui.view">
+        <field name="name">levantamiento.linea.tree</field>
+        <field name="model">levantamiento.linea</field>
+        <field name="arch" type="xml">
+            <tree string="Líneas de Medidas">
+                <field name="levantamiento_id"/>
+                <field name="cliente_id"/>
+                <field name="fecha"/>
+                <field name="tipo_elemento_id"/>
+                <field name="ubicacion"/>
+                <field name="ancho"/>
+                <field name="alto"/>
+                <field name="uom_id"/>
+                <field name="area_ft2"/>
+                <field name="cantidad"/>
+                <field name="estado_linea" widget="badge"
+                       decoration-info="estado_linea == 'pendiente'"
+                       decoration-warning="estado_linea == 'en_proceso'"
+                       decoration-success="estado_linea == 'instalado'"
+                       decoration-danger="estado_linea == 'con_incidencia'"/>
+                <field name="log_count" string="Eventos"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View for Lines -->
+    <record id="view_levantamiento_linea_search" model="ir.ui.view">
+        <field name="name">levantamiento.linea.search</field>
+        <field name="model">levantamiento.linea</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Elementos">
+                <field name="tipo_elemento_id"/>
+                <field name="ubicacion"/>
+                <field name="levantamiento_id"/>
+                <field name="cliente_id"/>
+                <separator/>
+                <filter name="filter_pendiente" string="Pendientes"
+                        domain="[('estado_linea', '=', 'pendiente')]"/>
+                <filter name="filter_con_incidencia" string="Con Incidencia"
+                        domain="[('estado_linea', '=', 'con_incidencia')]"/>
+                <filter name="filter_instalado" string="Instalados"
+                        domain="[('estado_linea', '=', 'instalado')]"/>
+                <separator/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_cliente" string="Cliente" context="{'group_by': 'cliente_id'}"/>
+                    <filter name="group_tipo" string="Tipo Elemento" context="{'group_by': 'tipo_elemento_id'}"/>
+                    <filter name="group_estado" string="Estado" context="{'group_by': 'estado_linea'}"/>
+                    <filter name="group_levantamiento" string="Levantamiento" context="{'group_by': 'levantamiento_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Lines -->
+    <record id="action_levantamiento_linea" model="ir.actions.act_window">
+        <field name="name">Elementos Medidos</field>
+        <field name="res_model">levantamiento.linea</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_levantamiento_linea_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay elementos medidos
+            </p>
+        </field>
+    </record>
+
+    <!-- =================================================================== -->
+    <!-- ACTIONS -->
+    <!-- =================================================================== -->
+
+    <!-- Main Action for Levantamientos -->
+    <record id="action_levantamiento_medida" model="ir.actions.act_window">
+        <field name="name">Levantamientos de Medidas</field>
+        <field name="res_model">levantamiento.medida</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_levantamiento_medida_search"/>
+        <field name="context">{'search_default_filter_my': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo levantamiento de medidas
+            </p>
+            <p>
+                Registre las medidas tomadas en las sucursales de sus clientes
+                para trabajos de rotulación, vallas, cristales y más.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action for Lines -->
+    <record id="action_levantamiento_linea" model="ir.actions.act_window">
+        <field name="name">Todas las Medidas</field>
+        <field name="res_model">levantamiento.linea</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_neutral_face">
+                No hay líneas de medidas registradas.
+            </p>
+        </field>
+    </record>
+
+    <!-- =================================================================== -->
+    <!-- MENUS -->
+    <!-- =================================================================== -->
+
+    <!-- Root Menu -->
+    <menuitem id="menu_levantamiento_root"
+              name="Levantamientos"
+              sequence="45"
+              web_icon="levantamiento_medidas,static/description/icon.png"
+              groups="levantamiento_medidas.group_levantamiento_user"/>
+
+    <!-- Submenu Levantamientos -->
+    <menuitem id="menu_levantamiento_medidas"
+              name="Levantamientos"
+              parent="menu_levantamiento_root"
+              sequence="10"/>
+
+    <menuitem id="menu_levantamiento_medida_all"
+              name="Levantamientos de Medidas"
+              parent="menu_levantamiento_medidas"
+              action="action_levantamiento_medida"
+              sequence="10"/>
+
+    <menuitem id="menu_levantamiento_linea_all"
+              name="Elementos Medidos"
+              parent="menu_levantamiento_medidas"
+              action="action_levantamiento_linea"
+              sequence="20"/>
+
+    <menuitem id="menu_levantamiento_log_all"
+              name="Historial de Eventos"
+              parent="menu_levantamiento_medidas"
+              action="action_levantamiento_linea_log"
+              sequence="25"/>
+
+</odoo>

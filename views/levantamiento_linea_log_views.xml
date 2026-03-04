@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =================================================================== -->
+    <!-- LEVANTAMIENTO.LINEA.LOG VIEWS -->
+    <!-- =================================================================== -->
+
+    <!-- Log Form View -->
+    <record id="view_levantamiento_linea_log_form" model="ir.ui.view">
+        <field name="name">levantamiento.linea.log.form</field>
+        <field name="model">levantamiento.linea.log</field>
+        <field name="arch" type="xml">
+            <form string="Evento">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="resumen"/>
+                        <h1>
+                            <field name="resumen" placeholder="Resumen del evento..."/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="tipo" widget="radio" options="{'horizontal': true}"/>
+                            <field name="fecha"/>
+                            <field name="usuario_id"/>
+                            <field name="estado" widget="badge"
+                                   decoration-info="estado == 'pendiente'"
+                                   decoration-warning="estado == 'en_proceso'"
+                                   decoration-success="estado == 'resuelto'"
+                                   decoration-danger="estado == 'no_resuelto'"/>
+                        </group>
+                        <group>
+                            <field name="linea_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Cambio de medidas -->
+                    <group string="Cambio de Medidas"
+                           invisible="tipo != 'cambio_medida'"
+                           col="2">
+                        <field name="medida_anterior" placeholder="Ej: 50 x 20 pies"/>
+                        <field name="medida_nueva" placeholder="Ej: 55 x 22 pies"/>
+                    </group>
+
+                    <!-- Descripción -->
+                    <group string="Descripción Detallada">
+                        <field name="descripcion" nolabel="1" colspan="2"
+                               placeholder="Describe en detalle el evento, qué ocurrió, cómo se resolvió, etc."/>
+                    </group>
+
+                    <!-- Costo -->
+                    <group string="Costo Asociado" col="4">
+                        <field name="costo"/>
+                        <field name="currency_id" groups="base.group_multi_currency"/>
+                    </group>
+
+                    <!-- Fotos -->
+                    <group string="Fotos del Evento" col="2">
+                        <field name="image_1" widget="image" class="oe_avatar"/>
+                        <field name="image_2" widget="image" class="oe_avatar"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Log Tree View -->
+    <record id="view_levantamiento_linea_log_tree" model="ir.ui.view">
+        <field name="name">levantamiento.linea.log.tree</field>
+        <field name="model">levantamiento.linea.log</field>
+        <field name="arch" type="xml">
+            <tree string="Historial de Eventos" default_order="fecha desc">
+                <field name="fecha"/>
+                <field name="tipo" widget="badge"
+                       decoration-danger="tipo == 'incidencia'"
+                       decoration-warning="tipo == 'reparacion'"
+                       decoration-success="tipo == 'instalacion'"
+                       decoration-info="tipo == 'cambio_medida'"/>
+                <field name="resumen"/>
+                <field name="usuario_id" widget="many2one_avatar_user"/>
+                <field name="estado" widget="badge"
+                       decoration-info="estado == 'pendiente'"
+                       decoration-warning="estado == 'en_proceso'"
+                       decoration-success="estado == 'resuelto'"
+                       decoration-danger="estado == 'no_resuelto'"/>
+                <field name="costo" sum="Total Costo" optional="show"/>
+                <field name="linea_id" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Log Search View -->
+    <record id="view_levantamiento_linea_log_search" model="ir.ui.view">
+        <field name="name">levantamiento.linea.log.search</field>
+        <field name="model">levantamiento.linea.log</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Eventos">
+                <field name="resumen"/>
+                <field name="linea_id"/>
+                <field name="usuario_id"/>
+                <separator/>
+                <filter name="filter_incidencias" string="Incidencias"
+                        domain="[('tipo', '=', 'incidencia')]"/>
+                <filter name="filter_reparaciones" string="Reparaciones"
+                        domain="[('tipo', '=', 'reparacion')]"/>
+                <filter name="filter_instalaciones" string="Instalaciones"
+                        domain="[('tipo', '=', 'instalacion')]"/>
+                <filter name="filter_cambios" string="Cambios de Medidas"
+                        domain="[('tipo', '=', 'cambio_medida')]"/>
+                <separator/>
+                <filter name="filter_pendiente" string="Pendientes"
+                        domain="[('estado', '=', 'pendiente')]"/>
+                <filter name="filter_no_resuelto" string="No Resueltos"
+                        domain="[('estado', '=', 'no_resuelto')]"/>
+                <separator/>
+                <filter name="filter_today" string="Hoy"
+                        domain="[('fecha', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
+                                 ('fecha', '&lt;', datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)))]"/>
+                <filter name="filter_week" string="Esta Semana"
+                        domain="[('fecha', '>=', (context_today() - relativedelta(weekday=0, weeks=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_tipo" string="Tipo" context="{'group_by': 'tipo'}"/>
+                    <filter name="group_estado" string="Estado" context="{'group_by': 'estado'}"/>
+                    <filter name="group_linea" string="Elemento" context="{'group_by': 'linea_id'}"/>
+                    <filter name="group_fecha" string="Fecha" context="{'group_by': 'fecha:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Log Action -->
+    <record id="action_levantamiento_linea_log" model="ir.actions.act_window">
+        <field name="name">Historial de Eventos</field>
+        <field name="res_model">levantamiento.linea.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_levantamiento_linea_log_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay eventos registrados
+            </p>
+            <p>
+                Aquí se muestra el historial de incidencias, reparaciones,
+                instalaciones y otros eventos relacionados con los elementos medidos.
+            </p>
+        </field>
+    </record>
+
+    <!-- =================================================================== -->
+    <!-- LEVANTAMIENTO.LINEA DETAIL FORM VIEW -->
+    <!-- =================================================================== -->
+
+    <!-- Detailed Line Form (when clicking on a line) -->
+    <record id="view_levantamiento_linea_form_detail" model="ir.ui.view">
+        <field name="name">levantamiento.linea.form.detail</field>
+        <field name="model">levantamiento.linea</field>
+        <field name="priority">5</field>
+        <field name="arch" type="xml">
+            <form string="Detalle del Elemento">
+                <header>
+                    <button name="action_add_log" type="object"
+                            string="Registrar Evento" class="btn-primary"
+                            icon="fa-plus"/>
+                    <field name="estado_linea" widget="statusbar"
+                           statusbar_visible="pendiente,en_proceso,instalado"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_logs" type="object"
+                                class="oe_stat_button" icon="fa-history">
+                            <field name="log_count" widget="statinfo" string="Eventos"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="tipo_elemento_id"/>
+                        <h1>
+                            <field name="tipo_elemento_id" options="{'no_open': True, 'no_create': True}"/>
+                        </h1>
+                        <h2>
+                            <field name="ubicacion" placeholder="Ubicación del elemento"/>
+                        </h2>
+                    </div>
+
+                    <group>
+                        <group string="Levantamiento">
+                            <field name="levantamiento_id" readonly="1"/>
+                            <field name="cliente_id" readonly="1"/>
+                            <field name="fecha" readonly="1"/>
+                        </group>
+                        <group string="Medidas">
+                            <label for="ancho"/>
+                            <div class="o_row">
+                                <field name="ancho" class="oe_inline"/>
+                                <span>x</span>
+                                <field name="alto" class="oe_inline"/>
+                                <span>x</span>
+                                <field name="profundidad" class="oe_inline"/>
+                                <field name="uom_id" class="oe_inline"/>
+                            </div>
+                            <field name="cantidad"/>
+                            <field name="area_ft2" readonly="1"/>
+                            <field name="area_total_ft2" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Conversión a Metros">
+                            <field name="ancho_m" readonly="1"/>
+                            <field name="alto_m" readonly="1"/>
+                            <field name="profundidad_m" readonly="1"/>
+                        </group>
+                        <group string="Foto del Elemento">
+                            <field name="image_1920" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Notas" name="notas">
+                            <field name="notas" placeholder="Notas adicionales sobre este elemento..."/>
+                        </page>
+
+                        <page string="Historial de Eventos" name="historial">
+                            <field name="log_ids" mode="tree">
+                                <tree string="Eventos" default_order="fecha desc">
+                                    <field name="fecha"/>
+                                    <field name="tipo"/>
+                                    <field name="resumen"/>
+                                    <field name="estado"/>
+                                    <field name="usuario_id" widget="many2one_avatar_user"/>
+                                    <field name="costo" sum="Total"/>
+                                </tree>
+                            </field>
+                            <div class="text-center mt-3">
+                                <button name="action_add_log" type="object"
+                                        string="+ Agregar Evento Detallado" class="btn-link"/>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+</odoo>

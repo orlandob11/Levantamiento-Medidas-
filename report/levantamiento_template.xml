@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =================================================================== -->
+    <!-- REPORT TEMPLATE -->
+    <!-- =================================================================== -->
+
+    <template id="report_levantamiento_medida_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header -->
+                        <div class="row mb-4">
+                            <div class="col-8">
+                                <h2 class="text-primary">Levantamiento de Medidas</h2>
+                                <h3><span t-field="doc.name"/></h3>
+                            </div>
+                            <div class="col-4 text-end">
+                                <p class="mb-1">
+                                    <strong>Fecha:</strong>
+                                    <span t-field="doc.fecha" t-options='{"widget": "date"}'/>
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Estado:</strong>
+                                    <span t-field="doc.state"/>
+                                </p>
+                                <p class="mb-0" t-if="doc.fecha_instalacion">
+                                    <strong>Instalación:</strong>
+                                    <span t-field="doc.fecha_instalacion" t-options='{"widget": "date"}'/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr class="mb-4"/>
+
+                        <!-- Customer and Location Info -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h5 class="text-muted">Cliente</h5>
+                                <div t-field="doc.cliente_id"
+                                     t-options='{"widget": "contact", "fields": ["name", "address", "phone", "email"]}'/>
+                            </div>
+                            <div class="col-6" t-if="doc.sucursal_id">
+                                <h5 class="text-muted">Sucursal</h5>
+                                <div t-field="doc.sucursal_id"
+                                     t-options='{"widget": "contact", "fields": ["name", "address", "phone"]}'/>
+                            </div>
+                        </div>
+
+                        <!-- Responsibles -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <p class="mb-1">
+                                    <strong>Responsable:</strong>
+                                    <span t-field="doc.responsable_id.name"/>
+                                </p>
+                            </div>
+                            <div class="col-6" t-if="doc.instalador_id">
+                                <p class="mb-1">
+                                    <strong>Instalador:</strong>
+                                    <span t-field="doc.instalador_id.name"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Measurements Table -->
+                        <t t-if="doc.linea_ids">
+                            <h4 class="mb-3">Detalle de Medidas</h4>
+                            <table class="table table-sm table-striped table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-center" style="width: 5%;">#</th>
+                                        <th style="width: 15%;">Tipo</th>
+                                        <th style="width: 20%;">Ubicación</th>
+                                        <th class="text-end" style="width: 10%;">Ancho</th>
+                                        <th class="text-end" style="width: 10%;">Alto</th>
+                                        <th class="text-end" style="width: 10%;">Prof.</th>
+                                        <th class="text-center" style="width: 8%;">Unidad</th>
+                                        <th class="text-center" style="width: 7%;">Cant.</th>
+                                        <th class="text-end" style="width: 15%;">Área (ft²)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="line_num" t-value="1"/>
+                                    <t t-set="total_area" t-value="0"/>
+                                    <t t-foreach="doc.linea_ids" t-as="line">
+                                        <tr>
+                                            <td class="text-center"><t t-esc="line_num"/></td>
+                                            <td><span t-field="line.tipo_elemento_id.name"/></td>
+                                            <td><span t-field="line.ubicacion"/></td>
+                                            <td class="text-end">
+                                                <span t-field="line.ancho" t-options='{"precision": 2}'/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-field="line.alto" t-options='{"precision": 2}'/>
+                                            </td>
+                                            <td class="text-end">
+                                                <t t-if="line.profundidad">
+                                                    <span t-field="line.profundidad" t-options='{"precision": 2}'/>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-field="line.uom_id.name"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-field="line.cantidad"/>
+                                            </td>
+                                            <td class="text-end">
+                                                <span t-field="line.area_total_ft2" t-options='{"precision": 2}'/>
+                                            </td>
+                                        </tr>
+                                        <t t-set="line_num" t-value="line_num + 1"/>
+                                        <t t-set="total_area" t-value="total_area + line.area_total_ft2"/>
+
+                                        <!-- Notes row if exists -->
+                                        <tr t-if="line.notas" class="table-light">
+                                            <td></td>
+                                            <td colspan="8" class="small text-muted fst-italic">
+                                                <i class="fa fa-comment me-1"/>
+                                                <span t-field="line.notas"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot class="table-secondary">
+                                    <tr>
+                                        <td colspan="7" class="text-end"><strong>Total de Elementos:</strong></td>
+                                        <td class="text-center"><strong t-esc="len(doc.linea_ids)"/></td>
+                                        <td class="text-end">
+                                            <strong><t t-esc="'%.4f' % total_area"/> ft²</strong>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </t>
+
+                        <!-- Measurement Photos -->
+                        <t t-if="doc.linea_ids.filtered(lambda l: l.image_1920)">
+                            <div class="page-break-before"/>
+                            <h4 class="mb-3 mt-4">Fotos de Elementos</h4>
+                            <div class="row">
+                                <t t-foreach="doc.linea_ids.filtered(lambda l: l.image_1920)" t-as="line">
+                                    <div class="col-4 mb-3 text-center">
+                                        <img t-att-src="image_data_uri(line.image_512)"
+                                             style="max-width: 100%; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;"
+                                             alt="Foto del elemento"/>
+                                        <p class="small mt-1 mb-0">
+                                            <strong t-esc="line.tipo_elemento_id.name"/>
+                                            <t t-if="line.ubicacion"> - <t t-esc="line.ubicacion"/></t>
+                                        </p>
+                                        <p class="small text-muted">
+                                            <t t-esc="line.ancho"/> x <t t-esc="line.alto"/>
+                                            <t t-esc="line.uom_id.name"/>
+                                        </p>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Reference Photos Gallery (from Chatter Attachments) -->
+                        <t t-if="doc.image_ids">
+                            <div class="page-break-before"/>
+                            <h4 class="mb-3 mt-4">Galería de Fotos de Referencia</h4>
+                            <div class="row">
+                                <t t-foreach="doc.image_ids" t-as="foto">
+                                    <div class="col-4 mb-3 text-center">
+                                        <img t-att-src="image_data_uri(foto.datas)"
+                                             style="max-width: 100%; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;"
+                                             alt="Foto de referencia"/>
+                                        <p class="small mt-1 mb-0">
+                                            <strong t-esc="foto.name"/>
+                                        </p>
+                                        <p class="small text-muted mb-0">
+                                            <t t-esc="foto.create_date"/>
+                                        </p>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+
+                        <!-- Notes Section -->
+                        <div class="mt-4" t-if="doc.notas_levantamiento or doc.notas_instalacion or doc.incidencias">
+                            <h4 class="mb-3">Notas e Incidencias</h4>
+
+                            <div t-if="doc.notas_levantamiento" class="mb-3">
+                                <h6 class="text-muted">Notas del Levantamiento</h6>
+                                <div class="border rounded p-2 bg-light">
+                                    <t t-raw="doc.notas_levantamiento"/>
+                                </div>
+                            </div>
+
+                            <div t-if="doc.notas_instalacion" class="mb-3">
+                                <h6 class="text-muted">Notas de Instalación</h6>
+                                <div class="border rounded p-2 bg-light">
+                                    <t t-raw="doc.notas_instalacion"/>
+                                </div>
+                            </div>
+
+                            <div t-if="doc.incidencias" class="mb-3">
+                                <h6 class="text-danger">Incidencias</h6>
+                                <div class="border border-danger rounded p-2 bg-light">
+                                    <t t-raw="doc.incidencias"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer with signature lines -->
+                        <div class="row mt-5 pt-4">
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid #000; width: 80%; margin: 0 auto; padding-top: 5px;">
+                                    Firma del Responsable
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid #000; width: 80%; margin: 0 auto; padding-top: 5px;">
+                                    Firma del Cliente
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

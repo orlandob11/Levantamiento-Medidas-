@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Tipos de Elementos predefinidos -->
+        <record id="tipo_elemento_cristal" model="levantamiento.tipo.elemento">
+            <field name="name">Cristal</field>
+            <field name="code">CRISTAL</field>
+            <field name="descripcion">Cristales para rotulación, vitrinas y escaparates</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="tipo_elemento_valla" model="levantamiento.tipo.elemento">
+            <field name="name">Valla</field>
+            <field name="code">VALLA</field>
+            <field name="descripcion">Vallas publicitarias de techo, pared o exterior</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="tipo_elemento_letrero" model="levantamiento.tipo.elemento">
+            <field name="name">Letrero</field>
+            <field name="code">LETRERO</field>
+            <field name="descripcion">Letreros luminosos o no luminosos</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="tipo_elemento_banner" model="levantamiento.tipo.elemento">
+            <field name="name">Banner</field>
+            <field name="code">BANNER</field>
+            <field name="descripcion">Banners roll-up, colgantes o de pared</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="tipo_elemento_rotulo" model="levantamiento.tipo.elemento">
+            <field name="name">Rótulo</field>
+            <field name="code">ROTULO</field>
+            <field name="descripcion">Rótulos de fachada y señalización</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="tipo_elemento_vinilo" model="levantamiento.tipo.elemento">
+            <field name="name">Vinilo</field>
+            <field name="code">VINILO</field>
+            <field name="descripcion">Vinilos adhesivos para superficies</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="tipo_elemento_lona" model="levantamiento.tipo.elemento">
+            <field name="name">Lona</field>
+            <field name="code">LONA</field>
+            <field name="descripcion">Lonas para estructuras y bastidores</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="tipo_elemento_acrilico" model="levantamiento.tipo.elemento">
+            <field name="name">Acrílico</field>
+            <field name="code">ACRILICO</field>
+            <field name="descripcion">Placas y letras de acrílico</field>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="tipo_elemento_pvc" model="levantamiento.tipo.elemento">
+            <field name="name">PVC</field>
+            <field name="code">PVC</field>
+            <field name="descripcion">Paneles y letras de PVC espumado</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <record id="tipo_elemento_otro" model="levantamiento.tipo.elemento">
+            <field name="name">Otro</field>
+            <field name="code">OTRO</field>
+            <field name="descripcion">Otros tipos de elementos</field>
+            <field name="sequence">999</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- =================================================================== -->
+        <!-- MODULE CATEGORY -->
+        <!-- =================================================================== -->
+
+        <record id="module_category_levantamiento" model="ir.module.category">
+            <field name="name">Levantamientos</field>
+            <field name="description">Gestión de levantamientos de medidas para trabajos de rotulación e instalación.</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- =================================================================== -->
+        <!-- SECURITY GROUPS -->
+        <!-- =================================================================== -->
+
+        <!-- User Group -->
+        <record id="group_levantamiento_user" model="res.groups">
+            <field name="name">Usuario de Levantamientos</field>
+            <field name="category_id" ref="module_category_levantamiento"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Puede crear y gestionar levantamientos de medidas propios.</field>
+        </record>
+
+        <!-- Manager Group -->
+        <record id="group_levantamiento_manager" model="res.groups">
+            <field name="name">Administrador de Levantamientos</field>
+            <field name="category_id" ref="module_category_levantamiento"/>
+            <field name="implied_ids" eval="[(4, ref('group_levantamiento_user'))]"/>
+            <field name="comment">Acceso completo a todos los levantamientos y configuración del módulo.</field>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- =================================================================== -->
+        <!-- RECORD RULES -->
+        <!-- =================================================================== -->
+
+        <!-- Rule: Users can see all levantamientos -->
+        <record id="rule_levantamiento_medida_user" model="ir.rule">
+            <field name="name">Levantamiento: Usuario ve todos</field>
+            <field name="model_id" ref="model_levantamiento_medida"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_levantamiento_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Rule: Managers can do everything -->
+        <record id="rule_levantamiento_medida_manager" model="ir.rule">
+            <field name="name">Levantamiento: Administrador acceso total</field>
+            <field name="model_id" ref="model_levantamiento_medida"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_levantamiento_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Rule: Multi-company -->
+        <record id="rule_levantamiento_medida_company" model="ir.rule">
+            <field name="name">Levantamiento: Multi-compañía</field>
+            <field name="model_id" ref="model_levantamiento_medida"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+    </data>
+</odoo>
