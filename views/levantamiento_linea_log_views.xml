@@ -76,9 +76,9 @@
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
         </field>
@@ -248,7 +248,7 @@
                         </page>
 
                         <page string="Historial de Eventos" name="historial">
-                            <field name="log_ids" mode="tree">
+                            <field name="log_ids" mode="tree" options="{'no_open': True}">
                                 <tree string="Eventos" default_order="fecha desc">
                                     <field name="fecha"/>
                                     <field name="tipo"/>
@@ -256,6 +256,9 @@
                                     <field name="estado"/>
                                     <field name="usuario_id" widget="many2one_avatar_user"/>
                                     <field name="costo" sum="Total"/>
+                                    <button name="action_open_form" type="object"
+                                            title="Abrir evento" icon="fa-external-link"
+                                            class="btn-link"/>
                                 </tree>
                             </field>
                             <div class="text-center mt-3">
@@ -266,9 +269,9 @@
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
         </field>

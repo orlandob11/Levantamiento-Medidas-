@@ -93,7 +93,8 @@
                         <!-- Pestaña de Líneas de Medidas -->
                         <page string="Medidas" name="medidas">
                             <field name="linea_ids" widget="one2many"
-                                   context="{'form_view_ref': 'levantamiento_medidas.view_levantamiento_linea_form_detail'}">
+                                   context="{'form_view_ref': 'levantamiento_medidas.view_levantamiento_linea_form_detail'}"
+                                   options="{'no_open': True}">
                                 <tree>
                                     <field name="sequence" widget="handle"/>
                                     <field name="tipo_elemento_id"/>
@@ -115,6 +116,9 @@
                                     <field name="notas" optional="hide"/>
                                     <button name="action_add_log" type="object"
                                             title="Registrar Evento" icon="fa-plus-circle"
+                                            class="btn-link"/>
+                                    <button name="action_open_detail" type="object"
+                                            title="Abrir detalle" icon="fa-external-link"
                                             class="btn-link"/>
                                 </tree>
                             </field>
@@ -174,9 +178,9 @@
 
                 <!-- Chatter -->
                 <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
         </field>
@@ -391,9 +395,9 @@
                     </group>
                 </sheet>
                 <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
         </field>

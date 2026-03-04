@@ -222,6 +222,19 @@ class LevantamientoLinea(models.Model):
             'context': {'default_linea_id': self.id},
         }
 
+    def action_open_detail(self):
+        """Abrir detalle en pantalla completa para mostrar chatter"""
+        self.ensure_one()
+        return {
+            'name': self.display_name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'levantamiento.linea',
+            'view_mode': 'form',
+            'view_id': self.env.ref('levantamiento_medidas.view_levantamiento_linea_form_detail').id,
+            'res_id': self.id,
+            'target': 'current',
+        }
+
     def action_add_log(self):
         """Agregar nuevo evento al historial"""
         self.ensure_one()

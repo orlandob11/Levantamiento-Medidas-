@@ -119,6 +119,19 @@ class LevantamientoLineaLog(models.Model):
         for record in self:
             record.costo_total = sum(record.costo_ids.mapped('subtotal'))
 
+    def action_open_form(self):
+        """Abrir evento en pantalla completa para mostrar chatter"""
+        self.ensure_one()
+        return {
+            'name': self.display_name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'levantamiento.linea.log',
+            'view_mode': 'form',
+            'view_id': self.env.ref('levantamiento_medidas.view_levantamiento_linea_log_form').id,
+            'res_id': self.id,
+            'target': 'current',
+        }
+
     def name_get(self):
         result = []
         for record in self:
