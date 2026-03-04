@@ -38,6 +38,7 @@ Características principales:
         # Data
         'data/sequence_data.xml',
         'data/tipo_elemento_data.xml',
+        'data/uom_data.xml',
         # Reports (must load before views that reference them)
         'report/levantamiento_report.xml',
         'report/levantamiento_template.xml',

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Garantizar que pulgadas esté disponible -->
+        <record id="uom.product_uom_inch" model="uom.uom">
+            <field name="active">True</field>
+        </record>
+
+        <!-- Corrección de traducción para evitar "en " en es_DO -->
+        <function model="uom.uom" name="write" context="{'lang': 'es_DO'}"
+                  eval="[[ref('uom.product_uom_inch')], {'name': 'Pulgada (in)'}]"/>
+    </data>
+</odoo>
