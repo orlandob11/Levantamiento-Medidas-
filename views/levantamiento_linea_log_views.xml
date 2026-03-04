@@ -248,17 +248,14 @@
                         </page>
 
                         <page string="Historial de Eventos" name="historial">
-                            <field name="log_ids" mode="tree" options="{'no_open': True}">
-                                <tree string="Eventos" default_order="fecha desc" no_open="1" create="0">
+                            <field name="log_ids" mode="tree">
+                                <tree string="Eventos" default_order="fecha desc" create="0">
                                     <field name="fecha"/>
                                     <field name="tipo"/>
                                     <field name="resumen"/>
                                     <field name="estado"/>
                                     <field name="usuario_id" widget="many2one_avatar_user"/>
                                     <field name="costo" sum="Total"/>
-                                    <button name="action_open_form" type="object"
-                                            title="Abrir evento" icon="fa-external-link"
-                                            class="btn-link"/>
                                 </tree>
                             </field>
                             <div class="text-center mt-3">

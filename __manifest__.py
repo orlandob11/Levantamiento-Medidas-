@@ -46,6 +46,11 @@ Características principales:
         'views/levantamiento_views.xml',
         'views/tipo_elemento_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'levantamiento_medidas/static/src/js/x2many_fullscreen_open_patch.js',
+        ],
+    },
     'demo': [],
     'installable': True,
     'application': True,

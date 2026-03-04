@@ -92,9 +92,8 @@
                     <notebook>
                         <!-- Pestaña de Líneas de Medidas -->
                         <page string="Medidas" name="medidas">
-                            <field name="linea_ids" widget="one2many"
-                                   options="{'no_open': True}">
-                                <tree no_open="1" create="0">
+                            <field name="linea_ids" widget="one2many">
+                                <tree create="0">
                                     <field name="sequence" widget="handle"/>
                                     <field name="tipo_elemento_id"/>
                                     <field name="ubicacion"/>
@@ -115,9 +114,6 @@
                                     <field name="notas" optional="hide"/>
                                     <button name="action_add_log" type="object"
                                             title="Registrar Evento" icon="fa-plus-circle"
-                                            class="btn-link"/>
-                                    <button name="action_open_detail" type="object"
-                                            title="Abrir detalle" icon="fa-external-link"
                                             class="btn-link"/>
                                 </tree>
                             </field>
