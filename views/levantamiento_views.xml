@@ -93,9 +93,8 @@
                         <!-- Pestaña de Líneas de Medidas -->
                         <page string="Medidas" name="medidas">
                             <field name="linea_ids" widget="one2many"
-                                   context="{'form_view_ref': 'levantamiento_medidas.view_levantamiento_linea_form_detail'}"
                                    options="{'no_open': True}">
-                                <tree>
+                                <tree editable="bottom" no_open="1">
                                     <field name="sequence" widget="handle"/>
                                     <field name="tipo_elemento_id"/>
                                     <field name="ubicacion"/>
