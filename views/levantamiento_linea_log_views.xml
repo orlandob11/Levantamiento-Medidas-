@@ -212,10 +212,12 @@
                             <field name="ancho"/>
                             <field name="alto"/>
                             <field name="profundidad"/>
-                            <field name="cantidad"/>
                             <field name="area_ft2" readonly="1"/>
                             <field name="area_total_ft2" readonly="1"/>
                         </group>
+                    </group>
+                    <group>
+                        <field name="cantidad"/>
                     </group>
 
                     <group>

@@ -348,7 +348,6 @@
                             <field name="levantamiento_id" invisible="1"/>
                             <field name="tipo_elemento_id" options="{'no_open': True}"/>
                             <field name="ubicacion"/>
-                            <field name="cantidad"/>
                         </group>
                         <group>
                             <field name="image_1920" widget="image" class="oe_avatar"/>
@@ -367,6 +366,9 @@
                             <field name="area_ft2" readonly="1"/>
                             <field name="area_total_ft2" readonly="1"/>
                         </group>
+                    </group>
+                    <group>
+                        <field name="cantidad"/>
                     </group>
                     <group>
                         <field name="notas"/>
