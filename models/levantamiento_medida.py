@@ -282,7 +282,6 @@ class LevantamientoMedida(models.Model):
             'target': 'current',
             'context': {
                 'default_levantamiento_id': self.id,
-                'default_linea_id': False,
             },
         }
 

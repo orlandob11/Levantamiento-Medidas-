@@ -209,11 +209,7 @@ class LevantamientoLinea(models.Model):
     def _compute_log_event_data(self):
         log_model = self.env['levantamiento.linea.log']
         for record in self:
-            logs = log_model.search([
-                '|',
-                ('linea_id', '=', record.id),
-                ('linea_ids', 'in', record.id),
-            ], order='fecha desc')
+            logs = log_model.search([('linea_ids', 'in', record.id)], order='fecha desc')
             record.log_event_ids = logs
             record.log_count = len(logs)
 
@@ -229,9 +225,8 @@ class LevantamientoLinea(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'levantamiento.linea.log',
             'view_mode': 'tree,form',
-            'domain': ['|', ('linea_id', '=', self.id), ('linea_ids', 'in', self.id)],
+            'domain': [('linea_ids', 'in', self.id)],
             'context': {
-                'default_linea_id': self.id,
                 'default_linea_ids': [(6, 0, [self.id])],
                 'default_levantamiento_id': self.levantamiento_id.id,
             },
@@ -260,7 +255,6 @@ class LevantamientoLinea(models.Model):
             'view_mode': 'form',
             'target': 'current',
             'context': {
-                'default_linea_id': self.id,
                 'default_linea_ids': [(6, 0, [self.id])],
                 'default_levantamiento_id': self.levantamiento_id.id,
             },

@@ -32,7 +32,6 @@
                         </group>
                         <group>
                             <field name="levantamiento_id"/>
-                            <field name="linea_id" domain="[('levantamiento_id', '=', levantamiento_id)]"/>
                             <field name="linea_ids" widget="many2many_tags"
                                    domain="[('levantamiento_id', '=', levantamiento_id)]"
                                    options="{'no_create_edit': True}"/>
@@ -109,7 +108,6 @@
                        decoration-danger="estado == 'no_resuelto'"/>
                 <field name="costo" sum="Total Costo" optional="show"/>
                 <field name="levantamiento_id" optional="show"/>
-                <field name="linea_id" optional="show"/>
                 <field name="linea_ids" widget="many2many_tags" optional="show"/>
             </tree>
         </field>
@@ -123,7 +121,7 @@
             <search string="Buscar Eventos">
                 <field name="resumen"/>
                 <field name="levantamiento_id"/>
-                <field name="linea_id"/>
+                <field name="linea_ids"/>
                 <field name="usuario_id"/>
                 <separator/>
                 <filter name="filter_incidencias" string="Incidencias"
@@ -150,7 +148,6 @@
                     <filter name="group_levantamiento" string="Levantamiento" context="{'group_by': 'levantamiento_id'}"/>
                     <filter name="group_tipo" string="Tipo" context="{'group_by': 'tipo'}"/>
                     <filter name="group_estado" string="Estado" context="{'group_by': 'estado'}"/>
-                    <filter name="group_linea" string="Elemento" context="{'group_by': 'linea_id'}"/>
                     <filter name="group_fecha" string="Fecha" context="{'group_by': 'fecha:month'}"/>
                 </group>
             </search>

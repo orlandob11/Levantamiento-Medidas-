@@ -129,7 +129,7 @@
                         </page>
 
                         <page string="Eventos Compartidos" name="eventos_compartidos">
-                            <field name="evento_ids" mode="tree" domain="[('linea_id', '=', False)]">
+                            <field name="evento_ids" mode="tree">
                                 <tree default_order="fecha desc" create="0">
                                     <field name="fecha"/>
                                     <field name="tipo"/>
