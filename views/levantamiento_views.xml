@@ -357,20 +357,9 @@
                     <group string="Dimensiones">
                         <group>
                             <field name="uom_id" options="{'no_create': True}"/>
-                            <div class="row g-2 mb-2">
-                                <div class="col-12 col-sm-4">
-                                    <label for="ancho" class="o_form_label"/>
-                                    <field name="ancho" class="w-100"/>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <label for="alto" class="o_form_label"/>
-                                    <field name="alto" class="w-100"/>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <label for="profundidad" class="o_form_label"/>
-                                    <field name="profundidad" class="w-100"/>
-                                </div>
-                            </div>
+                            <field name="ancho"/>
+                            <field name="alto"/>
+                            <field name="profundidad"/>
                         </group>
                         <group>
                             <field name="ancho_m" readonly="1"/>
