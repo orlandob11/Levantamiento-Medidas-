@@ -128,6 +128,25 @@
                             </group>
                         </page>
 
+                        <page string="Eventos Compartidos" name="eventos_compartidos">
+                            <field name="evento_ids" mode="tree" domain="[('linea_id', '=', False)]">
+                                <tree default_order="fecha desc" create="0">
+                                    <field name="fecha"/>
+                                    <field name="tipo"/>
+                                    <field name="resumen"/>
+                                    <field name="estado"/>
+                                    <field name="usuario_id" widget="many2one_avatar_user"/>
+                                    <field name="linea_ids" widget="many2many_tags" optional="show"/>
+                                    <field name="costo_total" sum="Total"/>
+                                </tree>
+                            </field>
+
+                            <div class="text-center mt-3">
+                                <button name="action_add_evento_compartido" type="object"
+                                        string="+ Agregar Evento Compartido" class="btn-link"/>
+                            </div>
+                        </page>
+
                         <!-- Pestaña de Fotos (desde Chatter) -->
                         <page string="Fotos" name="fotos">
                             <div class="alert alert-info" role="alert">

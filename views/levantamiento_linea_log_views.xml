@@ -31,7 +31,11 @@
                                    decoration-danger="estado == 'no_resuelto'"/>
                         </group>
                         <group>
-                            <field name="linea_id" readonly="1"/>
+                            <field name="levantamiento_id"/>
+                            <field name="linea_id" domain="[('levantamiento_id', '=', levantamiento_id)]"/>
+                            <field name="linea_ids" widget="many2many_tags"
+                                   domain="[('levantamiento_id', '=', levantamiento_id)]"
+                                   options="{'no_create_edit': True}"/>
                         </group>
                     </group>
 
@@ -104,7 +108,9 @@
                        decoration-success="estado == 'resuelto'"
                        decoration-danger="estado == 'no_resuelto'"/>
                 <field name="costo" sum="Total Costo" optional="show"/>
+                <field name="levantamiento_id" optional="show"/>
                 <field name="linea_id" optional="show"/>
+                <field name="linea_ids" widget="many2many_tags" optional="show"/>
             </tree>
         </field>
     </record>
@@ -116,6 +122,7 @@
         <field name="arch" type="xml">
             <search string="Buscar Eventos">
                 <field name="resumen"/>
+                <field name="levantamiento_id"/>
                 <field name="linea_id"/>
                 <field name="usuario_id"/>
                 <separator/>
@@ -140,6 +147,7 @@
                         domain="[('fecha', '>=', (context_today() - relativedelta(weekday=0, weeks=1)).strftime('%Y-%m-%d'))]"/>
                 <separator/>
                 <group expand="0" string="Agrupar por">
+                    <filter name="group_levantamiento" string="Levantamiento" context="{'group_by': 'levantamiento_id'}"/>
                     <filter name="group_tipo" string="Tipo" context="{'group_by': 'tipo'}"/>
                     <filter name="group_estado" string="Estado" context="{'group_by': 'estado'}"/>
                     <filter name="group_linea" string="Elemento" context="{'group_by': 'linea_id'}"/>
@@ -248,7 +256,7 @@
                         </page>
 
                         <page string="Historial de Eventos" name="historial">
-                            <field name="log_ids" mode="tree">
+                            <field name="log_event_ids" mode="tree">
                                 <tree string="Eventos" default_order="fecha desc" create="0">
                                     <field name="fecha"/>
                                     <field name="tipo"/>

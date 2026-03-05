@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 
 class LevantamientoLineaLog(models.Model):
@@ -16,10 +17,21 @@ class LevantamientoLineaLog(models.Model):
 
     linea_id = fields.Many2one(
         'levantamiento.linea',
-        string='Línea de Medidas',
-        required=True,
+        string='Elemento Principal',
         ondelete='cascade',
         index=True,
+    )
+    levantamiento_id = fields.Many2one(
+        'levantamiento.medida',
+        string='Levantamiento',
+        index=True,
+    )
+    linea_ids = fields.Many2many(
+        'levantamiento.linea',
+        'levantamiento_linea_log_rel',
+        'log_id',
+        'linea_id',
+        string='Elementos Relacionados',
     )
 
     # Tipo de evento
@@ -118,6 +130,34 @@ class LevantamientoLineaLog(models.Model):
     def _compute_costo_total(self):
         for record in self:
             record.costo_total = sum(record.costo_ids.mapped('subtotal'))
+
+    @api.onchange('linea_id')
+    def _onchange_linea_id(self):
+        for record in self:
+            if record.linea_id:
+                record.levantamiento_id = record.linea_id.levantamiento_id
+                if record.linea_id not in record.linea_ids:
+                    record.linea_ids = [(4, record.linea_id.id)]
+
+    @api.onchange('linea_ids')
+    def _onchange_linea_ids(self):
+        for record in self:
+            if record.linea_ids and not record.levantamiento_id:
+                record.levantamiento_id = record.linea_ids[0].levantamiento_id
+
+    @api.constrains('linea_id', 'linea_ids', 'levantamiento_id')
+    def _check_event_targets(self):
+        for record in self:
+            lineas = record.linea_ids | record.linea_id
+            if not lineas:
+                raise ValidationError(_('Debe seleccionar al menos un elemento para registrar el evento.'))
+
+            levantamientos = lineas.mapped('levantamiento_id')
+            if len(levantamientos) > 1:
+                raise ValidationError(_('Los elementos seleccionados deben pertenecer al mismo levantamiento.'))
+
+            if record.levantamiento_id and levantamientos and record.levantamiento_id != levantamientos[0]:
+                raise ValidationError(_('El levantamiento del evento no coincide con los elementos seleccionados.'))
 
     def action_open_form(self):
         """Abrir evento en pantalla completa para mostrar chatter"""

@@ -90,6 +90,12 @@ class LevantamientoMedida(models.Model):
         string='Nº de Elementos',
         compute='_compute_linea_count',
     )
+    evento_ids = fields.One2many(
+        'levantamiento.linea.log',
+        'levantamiento_id',
+        string='Eventos Compartidos',
+        copy=True,
+    )
 
     # Fotos/Adjuntos del Chatter
     attachment_ids = fields.Many2many(
@@ -261,6 +267,22 @@ class LevantamientoMedida(models.Model):
             'target': 'current',
             'context': {
                 'default_levantamiento_id': self.id,
+            },
+        }
+
+    def action_add_evento_compartido(self):
+        """Crear evento compartido para múltiples elementos"""
+        self.ensure_one()
+        return {
+            'name': _('Nuevo Evento Compartido'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'levantamiento.linea.log',
+            'view_mode': 'form',
+            'view_id': self.env.ref('levantamiento_medidas.view_levantamiento_linea_log_form').id,
+            'target': 'current',
+            'context': {
+                'default_levantamiento_id': self.id,
+                'default_linea_id': False,
             },
         }
 

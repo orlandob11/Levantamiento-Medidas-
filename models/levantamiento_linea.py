@@ -122,9 +122,14 @@ class LevantamientoLinea(models.Model):
         'linea_id',
         string='Historial de Eventos',
     )
+    log_event_ids = fields.Many2many(
+        'levantamiento.linea.log',
+        string='Eventos Relacionados',
+        compute='_compute_log_event_data',
+    )
     log_count = fields.Integer(
         string='Eventos',
-        compute='_compute_log_count',
+        compute='_compute_log_event_data',
     )
 
     # Estado de la línea
@@ -201,10 +206,16 @@ class LevantamientoLinea(models.Model):
                 record.area_ft2 = 0
                 record.area_total_ft2 = 0
 
-    @api.depends('log_ids')
-    def _compute_log_count(self):
+    def _compute_log_event_data(self):
+        log_model = self.env['levantamiento.linea.log']
         for record in self:
-            record.log_count = len(record.log_ids)
+            logs = log_model.search([
+                '|',
+                ('linea_id', '=', record.id),
+                ('linea_ids', 'in', record.id),
+            ], order='fecha desc')
+            record.log_event_ids = logs
+            record.log_count = len(logs)
 
     # -------------------------------------------------------------------------
     # ACTIONS
@@ -218,8 +229,12 @@ class LevantamientoLinea(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'levantamiento.linea.log',
             'view_mode': 'tree,form',
-            'domain': [('linea_id', '=', self.id)],
-            'context': {'default_linea_id': self.id},
+            'domain': ['|', ('linea_id', '=', self.id), ('linea_ids', 'in', self.id)],
+            'context': {
+                'default_linea_id': self.id,
+                'default_linea_ids': [(6, 0, [self.id])],
+                'default_levantamiento_id': self.levantamiento_id.id,
+            },
         }
 
     def action_open_detail(self):
@@ -244,7 +259,11 @@ class LevantamientoLinea(models.Model):
             'res_model': 'levantamiento.linea.log',
             'view_mode': 'form',
             'target': 'current',
-            'context': {'default_linea_id': self.id},
+            'context': {
+                'default_linea_id': self.id,
+                'default_linea_ids': [(6, 0, [self.id])],
+                'default_levantamiento_id': self.levantamiento_id.id,
+            },
         }
 
     # -------------------------------------------------------------------------
