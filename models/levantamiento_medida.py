@@ -93,7 +93,7 @@ class LevantamientoMedida(models.Model):
     evento_ids = fields.One2many(
         'levantamiento.linea.log',
         'levantamiento_id',
-        string='Eventos Compartidos',
+        string='Eventos',
         copy=True,
     )
 
@@ -274,7 +274,7 @@ class LevantamientoMedida(models.Model):
         """Crear evento compartido para múltiples elementos"""
         self.ensure_one()
         return {
-            'name': _('Nuevo Evento Compartido'),
+            'name': _('Nuevo Evento'),
             'type': 'ir.actions.act_window',
             'res_model': 'levantamiento.linea.log',
             'view_mode': 'form',

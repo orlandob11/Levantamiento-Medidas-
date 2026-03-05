@@ -8,6 +8,7 @@ class LevantamientoLinea(models.Model):
     _description = 'Línea de Medidas del Levantamiento'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'sequence, id'
+    _rec_name = 'name'
 
     levantamiento_id = fields.Many2one(
         'levantamiento.medida',
@@ -20,6 +21,11 @@ class LevantamientoLinea(models.Model):
     sequence = fields.Integer(
         string='Secuencia',
         default=10,
+    )
+    name = fields.Char(
+        string='Nombre',
+        compute='_compute_name',
+        store=True,
     )
 
     # Tipo de elemento (configurable)
@@ -206,6 +212,16 @@ class LevantamientoLinea(models.Model):
                 record.area_ft2 = 0
                 record.area_total_ft2 = 0
 
+    @api.depends('tipo_elemento_id.name', 'ubicacion', 'ancho', 'alto', 'uom_id.name')
+    def _compute_name(self):
+        for record in self:
+            name = f"{record.tipo_elemento_id.name or _('Elemento')}"
+            if record.ubicacion:
+                name += f" - {record.ubicacion}"
+            if record.ancho and record.alto:
+                name += f" ({record.ancho} x {record.alto} {record.uom_id.name or ''})"
+            record.name = name
+
     def _compute_log_event_data(self):
         log_model = self.env['levantamiento.linea.log']
         for record in self:
@@ -267,10 +283,5 @@ class LevantamientoLinea(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            name = f"{record.tipo_elemento_id.name or 'Elemento'}"
-            if record.ubicacion:
-                name += f" - {record.ubicacion}"
-            if record.ancho and record.alto:
-                name += f" ({record.ancho} x {record.alto} {record.uom_id.name or ''})"
-            result.append((record.id, name))
+            result.append((record.id, record.name or _('Elemento')))
         return result

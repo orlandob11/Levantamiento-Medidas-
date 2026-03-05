@@ -128,7 +128,7 @@
                             </group>
                         </page>
 
-                        <page string="Eventos Compartidos" name="eventos_compartidos">
+                        <page string="Eventos" name="eventos_compartidos">
                             <field name="evento_ids" mode="tree">
                                 <tree default_order="fecha desc" create="0">
                                     <field name="fecha"/>
@@ -143,7 +143,7 @@
 
                             <div class="text-center mt-3">
                                 <button name="action_add_evento_compartido" type="object"
-                                        string="+ Agregar Evento Compartido" class="btn-link"/>
+                                        string="+ Agregar Evento" class="btn-link"/>
                             </div>
                         </page>
 
