@@ -1,11 +1,11 @@
-# Levantamiento de Medidas para Odoo 17
+# Levantamiento de Elementos para Odoo 17
 
-Módulo para gestionar levantamientos de medidas en sucursales de clientes, con seguimiento tipo CRM para instalaciones y reimpresiones futuras.
+Módulo para gestionar levantamientos de elementos en sucursales de clientes, con seguimiento tipo CRM para instalaciones y reimpresiones futuras.
 
 ## Características
 
 ### Gestión de Levantamientos
-- **Registro de medidas** por cliente y sucursal
+- **Registro de elementos** por cliente y sucursal
 - **Tipos de elementos configurables** (cristales, vallas, letreros, banners, etc.)
 - **Soporte para unidades de medida** con conversiones automáticas (cm, m, pulgadas)
 - **Cálculo automático de áreas** en metros cuadrados
@@ -13,7 +13,7 @@ Módulo para gestionar levantamientos de medidas en sucursales de clientes, con 
 ### Galería de Fotos
 - Adjuntar múltiples fotos de referencia
 - Categorización por tipo (antes, durante, después, incidencia)
-- Fotos individuales por cada línea de medida
+- Fotos individuales por cada elemento
 
 ### Seguimiento y Trazabilidad
 - **Estados tipo pipeline**: Borrador → Medido → En Producción → En Instalación → Instalado → Cerrado
@@ -22,7 +22,7 @@ Módulo para gestionar levantamientos de medidas en sucursales de clientes, con 
 - **Vinculación con pedidos de venta**
 
 ### Reportes
-- **Reporte PDF imprimible** con medidas, fotos y notas
+- **Reporte PDF imprimible** con elementos, fotos y notas
 - Perfecto para entregar al cliente o archivar
 
 ## Instalación
@@ -31,7 +31,7 @@ Módulo para gestionar levantamientos de medidas en sucursales de clientes, con 
 2. Reiniciar el servidor de Odoo
 3. Activar el modo desarrollador
 4. Ir a Aplicaciones → Actualizar lista de aplicaciones
-5. Buscar "Levantamiento de Medidas" e instalar
+5. Buscar "Levantamiento de Elementos" e instalar
 
 ## Dependencias
 
@@ -49,11 +49,11 @@ Módulo para gestionar levantamientos de medidas en sucursales de clientes, con 
 
 ## Uso
 
-1. Crear un nuevo levantamiento desde **Levantamientos → Levantamientos de Medidas**
+1. Crear un nuevo levantamiento desde **Levantamientos → Levantamientos de Elementos**
 2. Seleccionar cliente y sucursal
-3. Agregar las líneas de medidas con tipo, ubicación y dimensiones
+3. Agregar los elementos con tipo, ubicación y dimensiones
 4. Adjuntar fotos de referencia
-5. Confirmar las medidas y seguir el flujo de trabajo
+5. Confirmar los elementos y seguir el flujo de trabajo
 
 ## Licencia
 

@@ -6,7 +6,7 @@
     <!-- =================================================================== -->
 
     <record id="action_report_levantamiento_medida" model="ir.actions.report">
-        <field name="name">Levantamiento de Medidas</field>
+        <field name="name">Levantamiento de Elementos</field>
         <field name="model">levantamiento.medida</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">levantamiento_medidas.report_levantamiento_medida_document</field>

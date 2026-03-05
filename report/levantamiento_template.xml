@@ -13,7 +13,7 @@
                         <!-- Header -->
                         <div class="row mb-4">
                             <div class="col-8">
-                                <h2 class="text-primary">Levantamiento de Medidas</h2>
+                                <h2 class="text-primary">Levantamiento de Elementos</h2>
                                 <h3><span t-field="doc.name"/></h3>
                             </div>
                             <div class="col-4 text-end">
@@ -66,7 +66,7 @@
 
                         <!-- Measurements Table -->
                         <t t-if="doc.linea_ids">
-                            <h4 class="mb-3">Detalle de Medidas</h4>
+                            <h4 class="mb-3">Detalle de Elementos</h4>
                             <table class="table table-sm table-striped table-bordered">
                                 <thead class="table-dark">
                                     <tr>

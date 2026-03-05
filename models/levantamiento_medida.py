@@ -6,7 +6,7 @@ from odoo.exceptions import ValidationError
 
 class LevantamientoMedida(models.Model):
     _name = 'levantamiento.medida'
-    _description = 'Levantamiento de Medidas'
+    _description = 'Levantamiento de Elementos'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'fecha desc, name desc'
 
@@ -83,7 +83,7 @@ class LevantamientoMedida(models.Model):
     linea_ids = fields.One2many(
         'levantamiento.linea',
         'levantamiento_id',
-        string='Líneas de Medidas',
+        string='Elementos',
         copy=True,
     )
     linea_count = fields.Integer(
@@ -256,10 +256,10 @@ class LevantamientoMedida(models.Model):
         self.write({'state': 'borrador'})
 
     def action_add_linea_fullscreen(self):
-        """Crear línea de medida en pantalla completa"""
+        """Crear elemento en pantalla completa"""
         self.ensure_one()
         return {
-            'name': _('Nueva Línea de Medida'),
+            'name': _('Nuevo Elemento'),
             'type': 'ir.actions.act_window',
             'res_model': 'levantamiento.linea',
             'view_mode': 'form',

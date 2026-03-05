@@ -39,7 +39,7 @@
                     </group>
 
                     <!-- Cambio de medidas -->
-                    <group string="Cambio de Medidas"
+                    <group string="Cambio de Dimensiones"
                            invisible="tipo != 'cambio_medida'"
                            col="2">
                         <field name="medida_anterior" placeholder="Ej: 50 x 20 pies"/>
@@ -123,7 +123,7 @@
                         domain="[('tipo', '=', 'reparacion')]"/>
                 <filter name="filter_instalaciones" string="Instalaciones"
                         domain="[('tipo', '=', 'instalacion')]"/>
-                <filter name="filter_cambios" string="Cambios de Medidas"
+                <filter name="filter_cambios" string="Cambios de Dimensiones"
                         domain="[('tipo', '=', 'cambio_medida')]"/>
                 <separator/>
                 <filter name="filter_pendiente" string="Pendientes"
@@ -207,7 +207,7 @@
                             <field name="cliente_id" readonly="1"/>
                             <field name="fecha" readonly="1"/>
                         </group>
-                        <group string="Medidas">
+                        <group string="Dimensiones">
                             <field name="uom_id" options="{'no_create': True}"/>
                             <div class="row g-2 mb-2">
                                 <div class="col-12 col-sm-4">

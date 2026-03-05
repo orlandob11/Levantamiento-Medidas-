@@ -6,7 +6,7 @@ from odoo.exceptions import ValidationError
 
 class LevantamientoLineaLog(models.Model):
     _name = 'levantamiento.linea.log'
-    _description = 'Historial de Línea de Medidas'
+    _description = 'Historial de Eventos de Elementos'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'fecha desc, id desc'
     _rec_name = 'resumen'
@@ -41,7 +41,7 @@ class LevantamientoLineaLog(models.Model):
         ('incidencia', 'Incidencia'),
         ('reparacion', 'Reparación'),
         ('instalacion', 'Instalación'),
-        ('cambio_medida', 'Cambio de Medidas'),
+        ('cambio_medida', 'Cambio de Dimensiones'),
         ('ajuste', 'Ajuste'),
         ('inspeccion', 'Inspección'),
         ('mantenimiento', 'Mantenimiento'),
@@ -71,11 +71,11 @@ class LevantamientoLineaLog(models.Model):
 
     # Campos para cambio de medidas
     medida_anterior = fields.Char(
-        string='Medida Anterior',
+        string='Dimensión Anterior',
         help='Registrar la medida anterior si hubo cambio',
     )
     medida_nueva = fields.Char(
-        string='Medida Nueva',
+        string='Dimensión Nueva',
         help='Registrar la nueva medida',
     )
 

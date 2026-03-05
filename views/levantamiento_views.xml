@@ -10,11 +10,11 @@
         <field name="name">levantamiento.medida.form</field>
         <field name="model">levantamiento.medida</field>
         <field name="arch" type="xml">
-            <form string="Levantamiento de Medidas">
+            <form string="Levantamiento de Elementos">
                 <header>
                     <!-- Botones de acción según estado -->
                     <button name="action_confirmar_medidas" type="object"
-                            string="Confirmar Medidas" class="btn-primary"
+                            string="Confirmar Elementos" class="btn-primary"
                             invisible="state != 'borrador'"/>
                     <button name="action_enviar_produccion" type="object"
                             string="Enviar a Producción" class="btn-primary"
@@ -90,7 +90,7 @@
                     </group>
 
                     <notebook>
-                        <!-- Pestaña de Líneas de Medidas -->
+                        <!-- Pestaña de Elementos -->
                         <page string="Elementos" name="medidas">
                             <field name="linea_ids" widget="one2many">
                                 <tree create="0">
@@ -120,7 +120,7 @@
 
                             <div class="text-center mt-3">
                                 <button name="action_add_linea_fullscreen" type="object"
-                                        string="+ Agregar Medida Detallada" class="btn-link"/>
+                                        string="Agregar Elemento" class="btn-link"/>
                             </div>
 
                             <group class="oe_subtotal_footer">
@@ -180,7 +180,7 @@
         <field name="name">levantamiento.medida.tree</field>
         <field name="model">levantamiento.medida</field>
         <field name="arch" type="xml">
-            <tree string="Levantamientos de Medidas"
+            <tree string="Levantamientos de Elementos"
                   decoration-info="state == 'borrador'"
                   decoration-warning="state == 'en_instalacion'"
                   decoration-success="state in ('instalado', 'cerrado')"
@@ -341,7 +341,7 @@
         <field name="name">levantamiento.linea.form</field>
         <field name="model">levantamiento.linea</field>
         <field name="arch" type="xml">
-            <form string="Línea de Medidas">
+            <form string="Elemento">
                 <sheet>
                     <group>
                         <group>
@@ -354,7 +354,7 @@
                             <field name="image_1920" widget="image" class="oe_avatar"/>
                         </group>
                     </group>
-                    <group string="Medidas">
+                    <group string="Dimensiones">
                         <group>
                             <field name="uom_id" options="{'no_create': True}"/>
                             <div class="row g-2 mb-2">
@@ -397,7 +397,7 @@
         <field name="name">levantamiento.linea.tree</field>
         <field name="model">levantamiento.linea</field>
         <field name="arch" type="xml">
-            <tree string="Líneas de Medidas">
+            <tree string="Elementos">
                 <field name="levantamiento_id"/>
                 <field name="cliente_id"/>
                 <field name="fecha"/>
@@ -466,32 +466,32 @@
 
     <!-- Main Action for Levantamientos -->
     <record id="action_levantamiento_medida" model="ir.actions.act_window">
-        <field name="name">Levantamientos de Medidas</field>
+        <field name="name">Levantamientos de Elementos</field>
         <field name="res_model">levantamiento.medida</field>
         <field name="view_mode">kanban,tree,form</field>
         <field name="search_view_id" ref="view_levantamiento_medida_search"/>
         <field name="context">{'search_default_filter_my': 1}</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Crear un nuevo levantamiento de medidas
-            </p>
-            <p>
-                Registre las medidas tomadas en las sucursales de sus clientes
-                para trabajos de rotulación, vallas, cristales y más.
-            </p>
+                <p class="o_view_nocontent_smiling_face">
+                    Crear un nuevo levantamiento de elementos
+                </p>
+                <p>
+                    Registre los elementos levantados en las sucursales de sus clientes
+                    para trabajos de rotulación, vallas, cristales y más.
+                </p>
         </field>
     </record>
 
     <!-- Action for Lines -->
     <record id="action_levantamiento_linea" model="ir.actions.act_window">
-        <field name="name">Todas las Medidas</field>
+        <field name="name">Todos los Elementos</field>
         <field name="res_model">levantamiento.linea</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_neutral_face">
-                No hay líneas de medidas registradas.
-            </p>
-        </field>
+                <p class="o_view_nocontent_neutral_face">
+                    No hay elementos registrados.
+                </p>
+            </field>
     </record>
 
     <!-- =================================================================== -->
@@ -512,7 +512,7 @@
               sequence="10"/>
 
     <menuitem id="menu_levantamiento_medida_all"
-              name="Levantamientos de Medidas"
+              name="Levantamientos de Elementos"
               parent="menu_levantamiento_medidas"
               action="action_levantamiento_medida"
               sequence="10"/>

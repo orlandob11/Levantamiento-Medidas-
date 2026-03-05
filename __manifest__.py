@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Levantamiento de Medidas',
+    'name': 'Levantamiento de Elementos',
     'version': '17.0.1.0.0',
     'category': 'Sales/CRM',
-    'summary': 'Gestión de levantamientos de medidas para trabajos de rotulación e instalación',
+    'summary': 'Gestión de levantamientos de elementos para trabajos de rotulación e instalación',
     'description': """
-Levantamiento de Medidas para Odoo 17
-=====================================
+Levantamiento de Elementos para Odoo 17
+=======================================
 
-Este módulo permite gestionar los levantamientos de medidas en sucursales de clientes,
+Este módulo permite gestionar los levantamientos de elementos en sucursales de clientes,
 con seguimiento tipo CRM para instalaciones y reimpresiones futuras.
 
 Características principales:
 ----------------------------
-* Gestión de medidas por cliente y sucursal
+* Gestión de elementos por cliente y sucursal
 * Tipos de elementos configurables (cristales, vallas, letreros, etc.)
 * Soporte para unidades de medida con conversiones
 * Galería de fotos de referencia

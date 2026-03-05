@@ -5,7 +5,7 @@ from odoo import api, fields, models, _
 
 class LevantamientoLinea(models.Model):
     _name = 'levantamiento.linea'
-    _description = 'Línea de Medidas del Levantamiento'
+    _description = 'Elemento del Levantamiento'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'sequence, id'
     _rec_name = 'name'
