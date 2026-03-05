@@ -91,7 +91,7 @@
 
                     <notebook>
                         <!-- Pestaña de Líneas de Medidas -->
-                        <page string="Medidas" name="medidas">
+                        <page string="Elementos" name="medidas">
                             <field name="linea_ids" widget="one2many">
                                 <tree create="0">
                                     <field name="sequence" widget="handle"/>
