@@ -69,13 +69,6 @@
                             </group>
                         </page>
 
-                        <!-- Tab Fotos -->
-                        <page string="Fotos" name="fotos">
-                            <group col="2">
-                                <field name="image_1" widget="image" class="oe_avatar"/>
-                                <field name="image_2" widget="image" class="oe_avatar"/>
-                            </group>
-                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">

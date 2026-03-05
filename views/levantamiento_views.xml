@@ -147,36 +147,6 @@
                             </div>
                         </page>
 
-                        <!-- Pestaña de Fotos (desde Chatter) -->
-                        <page string="Fotos" name="fotos">
-                            <div class="alert alert-info" role="alert">
-                                <i class="fa fa-info-circle"/> Las fotos se agregan desde el <strong>Chatter</strong> (sección de mensajes a la derecha).
-                                Haz clic en el ícono de clip 📎 para adjuntar imágenes.
-                            </div>
-                            <field name="image_ids" mode="kanban" readonly="1">
-                                <kanban>
-                                    <field name="id"/>
-                                    <field name="name"/>
-                                    <field name="mimetype"/>
-                                    <field name="create_date"/>
-                                    <templates>
-                                        <t t-name="kanban-box">
-                                            <div class="oe_kanban_global_click o_kanban_attachment">
-                                                <div class="o_kanban_image">
-                                                    <img t-att-src="'/web/image/' + record.id.raw_value + '?width=256&amp;height=256'"
-                                                         class="img-fluid" style="max-height: 150px;"/>
-                                                </div>
-                                                <div class="o_kanban_details mt-2">
-                                                    <strong><field name="name"/></strong>
-                                                    <div class="text-muted small"><field name="create_date"/></div>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </templates>
-                                </kanban>
-                            </field>
-                        </page>
-
                         <!-- Pestaña de Notas -->
                         <page string="Notas e Incidencias" name="notas">
                             <group>
