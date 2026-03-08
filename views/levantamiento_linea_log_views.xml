@@ -183,7 +183,7 @@
                             string="Registrar Evento" class="btn-primary"
                             icon="fa-plus"/>
                     <field name="estado_linea" widget="statusbar"
-                           statusbar_visible="pendiente,en_proceso,instalado"/>
+                           statusbar_visible="pendiente,medido,confirmado,con_incidencia,cancelado"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">

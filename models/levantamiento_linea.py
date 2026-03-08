@@ -148,10 +148,10 @@ class LevantamientoLinea(models.Model):
     # Estado de la línea
     estado_linea = fields.Selection([
         ('pendiente', 'Pendiente'),
-        ('en_proceso', 'En Proceso'),
-        ('instalado', 'Instalado'),
+        ('medido', 'Medido'),
+        ('confirmado', 'Confirmado'),
         ('con_incidencia', 'Con Incidencia'),
-        ('resuelto', 'Resuelto'),
+        ('cancelado', 'Cancelado'),
     ], string='Estado', default='pendiente', tracking=True)
 
     # Campos relacionados para vistas
@@ -169,6 +169,25 @@ class LevantamientoLinea(models.Model):
     # -------------------------------------------------------------------------
     # COMPUTE METHODS
     # -------------------------------------------------------------------------
+
+    def init(self):
+        """Migrar estados legacy al nuevo esquema simplificado."""
+        self.env.cr.execute("""
+            UPDATE levantamiento_linea
+               SET estado_linea = CASE estado_linea
+                   WHEN 'en_proceso' THEN 'medido'
+                   WHEN 'instalado' THEN 'confirmado'
+                   WHEN 'resuelto' THEN 'confirmado'
+                   ELSE estado_linea
+               END
+             WHERE estado_linea IN ('en_proceso', 'instalado', 'resuelto')
+        """)
+        self.env.cr.execute("""
+            UPDATE levantamiento_linea
+               SET estado_linea = 'pendiente'
+             WHERE estado_linea IS NULL
+                OR estado_linea NOT IN ('pendiente', 'medido', 'confirmado', 'con_incidencia', 'cancelado')
+        """)
 
     @api.depends('ancho', 'alto', 'profundidad', 'uom_id', 'conversion_uom_id')
     def _compute_medidas_convertidas(self):

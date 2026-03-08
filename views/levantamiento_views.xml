@@ -12,38 +12,9 @@
         <field name="arch" type="xml">
             <form string="Levantamiento de Elementos">
                 <header>
-                    <!-- Botones de acción según estado -->
-                    <button name="action_confirmar_medidas" type="object"
-                            string="Confirmar Elementos" class="btn-primary"
-                            invisible="state != 'borrador'"/>
-                    <button name="action_enviar_produccion" type="object"
-                            string="Enviar a Producción" class="btn-primary"
-                            invisible="state != 'medido'"/>
-                    <button name="action_iniciar_instalacion" type="object"
-                            string="Iniciar Instalación" class="btn-primary"
-                            invisible="state != 'en_produccion'"/>
-                    <button name="action_marcar_instalado" type="object"
-                            string="Marcar Instalado" class="btn-primary"
-                            invisible="state != 'en_instalacion'"/>
-                    <button name="action_cerrar" type="object"
-                            string="Cerrar" class="btn-success"
-                            invisible="state != 'instalado'"/>
-
-                    <!-- Botones secundarios -->
-                    <button name="action_cancelar" type="object"
-                            string="Cancelar" class="btn-secondary"
-                            invisible="state in ('cerrado', 'cancelado')"/>
-                    <button name="action_restablecer_borrador" type="object"
-                            string="Restablecer a Borrador" class="btn-secondary"
-                            invisible="state not in ('cancelado', 'medido')"/>
-
                     <!-- Botón imprimir -->
                     <button name="%(action_report_levantamiento_medida)d" type="action"
                             string="Imprimir" class="btn-secondary" icon="fa-print"/>
-
-                    <!-- Statusbar -->
-                    <field name="state" widget="statusbar"
-                           statusbar_visible="borrador,medido,en_produccion,en_instalacion,instalado,cerrado"/>
                 </header>
 
                 <sheet>
@@ -55,12 +26,6 @@
                             <field name="attachment_count" widget="statinfo" string="Adjuntos"/>
                         </button>
                     </div>
-
-                    <!-- Prioridad y título -->
-                    <widget name="web_ribbon" title="Cancelado" bg_color="text-bg-danger"
-                            invisible="state != 'cancelado'"/>
-                    <widget name="web_ribbon" title="Cerrado" bg_color="text-bg-success"
-                            invisible="state != 'cerrado'"/>
 
                     <div class="oe_title">
                         <label for="name"/>
@@ -82,10 +47,8 @@
                         <group name="fechas_responsables" string="Fechas y Responsables">
                             <field name="fecha"/>
                             <field name="responsable_id"/>
-                            <field name="fecha_instalacion"
-                                   invisible="state not in ('en_instalacion', 'instalado', 'cerrado')"/>
-                            <field name="instalador_id"
-                                   invisible="state not in ('en_instalacion', 'instalado', 'cerrado')"/>
+                            <field name="fecha_instalacion"/>
+                            <field name="instalador_id"/>
                         </group>
                     </group>
 
@@ -106,9 +69,10 @@
                                     <field name="area_total_ft2" readonly="1" sum="Total"/>
                                     <field name="estado_linea" widget="badge"
                                            decoration-info="estado_linea == 'pendiente'"
-                                           decoration-warning="estado_linea == 'en_proceso'"
-                                           decoration-success="estado_linea == 'instalado'"
-                                           decoration-danger="estado_linea == 'con_incidencia'"
+                                           decoration-primary="estado_linea == 'medido'"
+                                           decoration-success="estado_linea == 'confirmado'"
+                                           decoration-warning="estado_linea == 'con_incidencia'"
+                                           decoration-danger="estado_linea == 'cancelado'"
                                            optional="show"/>
                                     <field name="log_count" string="Eventos" optional="show"/>
                                     <field name="notas" optional="hide"/>
@@ -154,11 +118,11 @@
                                 <field name="notas_levantamiento"
                                        placeholder="Notas del levantamiento de medidas..."/>
                             </group>
-                            <group invisible="state in ('borrador', 'medido')">
+                            <group>
                                 <field name="notas_instalacion"
                                        placeholder="Notas de la instalación..."/>
                             </group>
-                            <group invisible="state in ('borrador', 'medido')">
+                            <group>
                                 <field name="incidencias"
                                        placeholder="Incidencias encontradas durante la instalación..."/>
                             </group>
@@ -181,24 +145,13 @@
         <field name="name">levantamiento.medida.tree</field>
         <field name="model">levantamiento.medida</field>
         <field name="arch" type="xml">
-            <tree string="Levantamientos de Elementos"
-                  decoration-info="state == 'borrador'"
-                  decoration-warning="state == 'en_instalacion'"
-                  decoration-success="state in ('instalado', 'cerrado')"
-                  decoration-muted="state == 'cancelado'"
-                  multi_edit="1">
+            <tree string="Levantamientos de Elementos" multi_edit="1">
                 <field name="name"/>
                 <field name="cliente_id"/>
                 <field name="sucursal_id" optional="show"/>
                 <field name="fecha"/>
                 <field name="responsable_id" widget="many2one_avatar_user"/>
                 <field name="linea_count" string="Elementos"/>
-                <field name="state" widget="badge"
-                       decoration-info="state == 'borrador'"
-                       decoration-primary="state == 'medido'"
-                       decoration-warning="state in ('en_produccion', 'en_instalacion')"
-                       decoration-success="state in ('instalado', 'cerrado')"
-                       decoration-danger="state == 'cancelado'"/>
                 <field name="company_id" optional="hide" groups="base.group_multi_company"/>
             </tree>
         </field>
@@ -209,7 +162,7 @@
         <field name="name">levantamiento.medida.kanban</field>
         <field name="model">levantamiento.medida</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state" class="o_kanban_small_column"
+            <kanban class="o_kanban_small_column"
                     on_create="quick_create" quick_create_view="levantamiento_medidas.view_levantamiento_medida_form_quick_create"
                     records_draggable="true" group_delete="false" group_create="false">
                 <field name="id"/>
@@ -220,10 +173,8 @@
                 <field name="responsable_id"/>
                 <field name="linea_count"/>
                 <field name="attachment_count"/>
-                <field name="state"/>
                 <field name="color"/>
                 <field name="priority"/>
-                <progressbar field="state" colors='{"borrador": "muted", "medido": "info", "en_produccion": "warning", "en_instalacion": "warning", "instalado": "success", "cerrado": "success", "cancelado": "danger"}'/>
                 <templates>
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_global_click #{!selection_mode ? 'p-2' : ''}">
@@ -296,21 +247,6 @@
                 <filter name="filter_my" string="Mis Levantamientos"
                         domain="[('responsable_id', '=', uid)]"/>
                 <separator/>
-                <filter name="filter_borrador" string="Borrador"
-                        domain="[('state', '=', 'borrador')]"/>
-                <filter name="filter_medido" string="Medido"
-                        domain="[('state', '=', 'medido')]"/>
-                <filter name="filter_en_produccion" string="En Producción"
-                        domain="[('state', '=', 'en_produccion')]"/>
-                <filter name="filter_en_instalacion" string="En Instalación"
-                        domain="[('state', '=', 'en_instalacion')]"/>
-                <filter name="filter_instalado" string="Instalado"
-                        domain="[('state', '=', 'instalado')]"/>
-                <filter name="filter_cerrado" string="Cerrado"
-                        domain="[('state', '=', 'cerrado')]"/>
-                <filter name="filter_cancelado" string="Cancelado"
-                        domain="[('state', '=', 'cancelado')]"/>
-                <separator/>
                 <filter name="filter_this_month" string="Este Mes"
                         domain="[('fecha', '>=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')),
                                  ('fecha', '&lt;', (context_today() + relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
@@ -324,8 +260,6 @@
                             context="{'group_by': 'sucursal_id'}"/>
                     <filter name="group_by_responsable" string="Responsable"
                             context="{'group_by': 'responsable_id'}"/>
-                    <filter name="group_by_state" string="Estado"
-                            context="{'group_by': 'state'}"/>
                     <filter name="group_by_fecha" string="Fecha"
                             context="{'group_by': 'fecha:month'}"/>
                 </group>
@@ -406,9 +340,10 @@
                 <field name="cantidad"/>
                 <field name="estado_linea" widget="badge"
                        decoration-info="estado_linea == 'pendiente'"
-                       decoration-warning="estado_linea == 'en_proceso'"
-                       decoration-success="estado_linea == 'instalado'"
-                       decoration-danger="estado_linea == 'con_incidencia'"/>
+                       decoration-primary="estado_linea == 'medido'"
+                       decoration-success="estado_linea == 'confirmado'"
+                       decoration-warning="estado_linea == 'con_incidencia'"
+                       decoration-danger="estado_linea == 'cancelado'"/>
                 <field name="log_count" string="Eventos"/>
             </tree>
         </field>
@@ -427,10 +362,14 @@
                 <separator/>
                 <filter name="filter_pendiente" string="Pendientes"
                         domain="[('estado_linea', '=', 'pendiente')]"/>
+                <filter name="filter_medido" string="Medidos"
+                        domain="[('estado_linea', '=', 'medido')]"/>
+                <filter name="filter_confirmado" string="Confirmados"
+                        domain="[('estado_linea', '=', 'confirmado')]"/>
                 <filter name="filter_con_incidencia" string="Con Incidencia"
                         domain="[('estado_linea', '=', 'con_incidencia')]"/>
-                <filter name="filter_instalado" string="Instalados"
-                        domain="[('estado_linea', '=', 'instalado')]"/>
+                <filter name="filter_cancelado" string="Cancelados"
+                        domain="[('estado_linea', '=', 'cancelado')]"/>
                 <separator/>
                 <group expand="0" string="Agrupar por">
                     <filter name="group_cliente" string="Cliente" context="{'group_by': 'cliente_id'}"/>

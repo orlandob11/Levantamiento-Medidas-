@@ -21,10 +21,6 @@
                                     <strong>Fecha:</strong>
                                     <span t-field="doc.fecha" t-options='{"widget": "date"}'/>
                                 </p>
-                                <p class="mb-1">
-                                    <strong>Estado:</strong>
-                                    <span t-field="doc.state"/>
-                                </p>
                                 <p class="mb-0" t-if="doc.fecha_instalacion">
                                     <strong>Instalación:</strong>
                                     <span t-field="doc.fecha_instalacion" t-options='{"widget": "date"}'/>

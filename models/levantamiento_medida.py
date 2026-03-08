@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
 
 
 class LevantamientoMedida(models.Model):
@@ -67,17 +66,6 @@ class LevantamientoMedida(models.Model):
         string='Instalador',
         tracking=True,
     )
-
-    # Estado
-    state = fields.Selection([
-        ('borrador', 'Borrador'),
-        ('medido', 'Medido'),
-        ('en_produccion', 'En Producción'),
-        ('en_instalacion', 'En Instalación'),
-        ('instalado', 'Instalado'),
-        ('cerrado', 'Cerrado'),
-        ('cancelado', 'Cancelado'),
-    ], string='Estado', default='borrador', required=True, tracking=True, copy=False)
 
     # Líneas de medidas
     linea_ids = fields.One2many(
@@ -211,49 +199,15 @@ class LevantamientoMedida(models.Model):
         default = dict(default or {})
         default.update({
             'name': _('Nuevo'),
-            'state': 'borrador',
             'fecha': fields.Date.context_today(self),
             'fecha_instalacion': False,
         })
         return super().copy(default)
 
-    # -------------------------------------------------------------------------
-    # ACTION METHODS
-    # -------------------------------------------------------------------------
-
-    def action_confirmar_medidas(self):
-        """Confirmar que las medidas han sido tomadas"""
-        for record in self:
-            if not record.linea_ids:
-                raise ValidationError(_('Debe agregar al menos una línea de medidas antes de confirmar.'))
-            record.state = 'medido'
-
-    def action_enviar_produccion(self):
-        """Enviar a producción"""
-        self.write({'state': 'en_produccion'})
-
-    def action_iniciar_instalacion(self):
-        """Iniciar instalación"""
-        self.write({'state': 'en_instalacion'})
-
-    def action_marcar_instalado(self):
-        """Marcar como instalado"""
-        self.write({
-            'state': 'instalado',
-            'fecha_instalacion': fields.Date.context_today(self),
-        })
-
-    def action_cerrar(self):
-        """Cerrar el levantamiento"""
-        self.write({'state': 'cerrado'})
-
-    def action_cancelar(self):
-        """Cancelar el levantamiento"""
-        self.write({'state': 'cancelado'})
-
-    def action_restablecer_borrador(self):
-        """Volver a borrador"""
-        self.write({'state': 'borrador'})
+    def _mail_track_get_field_sequence(self, fname):
+        if fname not in self._fields:
+            return 0
+        return super()._mail_track_get_field_sequence(fname)
 
     def action_add_linea_fullscreen(self):
         """Crear elemento en pantalla completa"""
