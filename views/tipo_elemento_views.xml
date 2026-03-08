@@ -95,7 +95,7 @@
               name="Configuración"
               parent="menu_levantamiento_root"
               sequence="100"
-              groups="levantamiento_medidas.group_levantamiento_manager"/>
+              groups="levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager"/>
 
     <menuitem id="menu_levantamiento_tipo_elemento"
               name="Tipos de Elementos"

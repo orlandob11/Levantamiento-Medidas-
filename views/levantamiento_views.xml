@@ -137,7 +137,8 @@
                                     <field name="estado"/>
                                     <field name="usuario_id" widget="many2one_avatar_user"/>
                                     <field name="linea_ids" widget="many2many_tags" optional="show"/>
-                                    <field name="costo_total" sum="Total"/>
+                                    <field name="costo_total" sum="Total"
+                                           groups="levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager"/>
                                 </tree>
                             </field>
 
@@ -360,15 +361,19 @@
                             <field name="alto"/>
                             <field name="profundidad"/>
                         </group>
-                        <group>
+                        <group string="Conversión">
+                            <field name="conversion_uom_id" options="{'no_create': True}"/>
                             <field name="ancho_m" readonly="1"/>
                             <field name="alto_m" readonly="1"/>
-                            <field name="area_ft2" readonly="1"/>
-                            <field name="area_total_ft2" readonly="1"/>
+                            <field name="profundidad_m" readonly="1"/>
                         </group>
                     </group>
                     <group>
                         <field name="cantidad"/>
+                    </group>
+                    <group string="Área">
+                        <field name="area_ft2" readonly="1"/>
+                        <field name="area_total_ft2" readonly="1"/>
                     </group>
                     <group>
                         <field name="notas"/>

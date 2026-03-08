@@ -54,7 +54,8 @@
 
                     <notebook>
                         <!-- Tab Costos -->
-                        <page string="Costos" name="costos">
+                        <page string="Costos" name="costos"
+                              groups="levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager">
                             <field name="costo_ids">
                                 <tree editable="bottom">
                                     <field name="descripcion"/>
@@ -99,7 +100,8 @@
                        decoration-warning="estado == 'en_proceso'"
                        decoration-success="estado == 'resuelto'"
                        decoration-danger="estado == 'no_resuelto'"/>
-                <field name="costo" sum="Total Costo" optional="show"/>
+                <field name="costo" sum="Total Costo" optional="show"
+                       groups="levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager"/>
                 <field name="levantamiento_id" optional="show"/>
                 <field name="linea_ids" widget="many2many_tags" optional="show"/>
             </tree>
@@ -221,7 +223,8 @@
                     </group>
 
                     <group>
-                        <group string="Conversión a Metros">
+                        <group string="Conversión de Unidades">
+                            <field name="conversion_uom_id" options="{'no_create': True}"/>
                             <field name="ancho_m" readonly="1"/>
                             <field name="alto_m" readonly="1"/>
                             <field name="profundidad_m" readonly="1"/>
@@ -244,7 +247,8 @@
                                     <field name="resumen"/>
                                     <field name="estado"/>
                                     <field name="usuario_id" widget="many2one_avatar_user"/>
-                                    <field name="costo" sum="Total"/>
+                                    <field name="costo" sum="Total"
+                                           groups="levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager"/>
                                 </tree>
                             </field>
                             <div class="text-center mt-3">

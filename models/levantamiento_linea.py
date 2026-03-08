@@ -62,23 +62,30 @@ class LevantamientoLinea(models.Model):
         domain=lambda self: [('category_id', '=', self.env.ref('uom.uom_categ_length', raise_if_not_found=False).id if self.env.ref('uom.uom_categ_length', raise_if_not_found=False) else False)],
         required=True,
     )
+    conversion_uom_id = fields.Many2one(
+        'uom.uom',
+        string='Convertir a',
+        default=lambda self: self.env.ref('uom.product_uom_meter', raise_if_not_found=False),
+        domain=lambda self: [('category_id', '=', self.env.ref('uom.uom_categ_length', raise_if_not_found=False).id if self.env.ref('uom.uom_categ_length', raise_if_not_found=False) else False)],
+        help='Unidad objetivo para visualizar la conversión de dimensiones',
+    )
 
     # Campos calculados para conversiones
     ancho_m = fields.Float(
-        string='Ancho (m)',
-        compute='_compute_medidas_metros',
+        string='Ancho (convertido)',
+        compute='_compute_medidas_convertidas',
         digits=(10, 4),
         store=True,
     )
     alto_m = fields.Float(
-        string='Alto (m)',
-        compute='_compute_medidas_metros',
+        string='Alto (convertido)',
+        compute='_compute_medidas_convertidas',
         digits=(10, 4),
         store=True,
     )
     profundidad_m = fields.Float(
-        string='Profundidad (m)',
-        compute='_compute_medidas_metros',
+        string='Profundidad (convertido)',
+        compute='_compute_medidas_convertidas',
         digits=(10, 4),
         store=True,
     )
@@ -163,26 +170,26 @@ class LevantamientoLinea(models.Model):
     # COMPUTE METHODS
     # -------------------------------------------------------------------------
 
-    @api.depends('ancho', 'alto', 'profundidad', 'uom_id')
-    def _compute_medidas_metros(self):
-        """Convertir medidas a metros usando UoM"""
+    @api.depends('ancho', 'alto', 'profundidad', 'uom_id', 'conversion_uom_id')
+    def _compute_medidas_convertidas(self):
+        """Convertir dimensiones a la unidad seleccionada"""
         uom_m = self.env.ref('uom.product_uom_meter', raise_if_not_found=False)
         for record in self:
-            if record.uom_id and uom_m:
-                try:
-                    record.ancho_m = record.uom_id._compute_quantity(
-                        record.ancho, uom_m, round=False
-                    )
-                    record.alto_m = record.uom_id._compute_quantity(
-                        record.alto, uom_m, round=False
-                    )
-                    record.profundidad_m = record.uom_id._compute_quantity(
-                        record.profundidad, uom_m, round=False
-                    )
-                except Exception:
-                    record.ancho_m = 0
-                    record.alto_m = 0
-                    record.profundidad_m = 0
+            target_uom = record.conversion_uom_id or uom_m
+            if (
+                record.uom_id
+                and target_uom
+                and record.uom_id.category_id == target_uom.category_id
+            ):
+                record.ancho_m = record.uom_id._compute_quantity(
+                    record.ancho, target_uom, round=False
+                )
+                record.alto_m = record.uom_id._compute_quantity(
+                    record.alto, target_uom, round=False
+                )
+                record.profundidad_m = record.uom_id._compute_quantity(
+                    record.profundidad, target_uom, round=False
+                )
             else:
                 record.ancho_m = 0
                 record.alto_m = 0

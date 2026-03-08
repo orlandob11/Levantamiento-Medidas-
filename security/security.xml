@@ -16,20 +16,28 @@
         <!-- SECURITY GROUPS -->
         <!-- =================================================================== -->
 
-        <!-- User Group -->
+        <!-- User Group (sin costos) -->
         <record id="group_levantamiento_user" model="res.groups">
-            <field name="name">Usuario de Levantamientos</field>
+            <field name="name">Usuario de Levantamientos (Sin Costos)</field>
             <field name="category_id" ref="module_category_levantamiento"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="comment">Puede crear y gestionar levantamientos de medidas propios.</field>
+            <field name="comment">Puede crear y gestionar levantamientos y eventos, sin acceso a costos.</field>
+        </record>
+
+        <!-- User Group (con costos, sin borrar) -->
+        <record id="group_levantamiento_cost_user" model="res.groups">
+            <field name="name">Usuario de Levantamientos (Con Costos)</field>
+            <field name="category_id" ref="module_category_levantamiento"/>
+            <field name="implied_ids" eval="[(4, ref('group_levantamiento_user'))]"/>
+            <field name="comment">Puede crear y editar todo, incluyendo costos, pero no puede eliminar registros.</field>
         </record>
 
         <!-- Manager Group -->
         <record id="group_levantamiento_manager" model="res.groups">
             <field name="name">Administrador de Levantamientos</field>
             <field name="category_id" ref="module_category_levantamiento"/>
-            <field name="implied_ids" eval="[(4, ref('group_levantamiento_user'))]"/>
-            <field name="comment">Acceso completo a todos los levantamientos y configuración del módulo.</field>
+            <field name="implied_ids" eval="[(4, ref('group_levantamiento_cost_user'))]"/>
+            <field name="comment">Acceso completo al módulo, incluyendo eliminación de registros.</field>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
 

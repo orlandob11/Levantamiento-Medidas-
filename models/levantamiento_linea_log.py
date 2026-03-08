@@ -92,11 +92,13 @@ class LevantamientoLineaLog(models.Model):
         string='Costo',
         digits=(10, 2),
         help='Costo asociado a esta incidencia/reparación',
+        groups='levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager',
     )
     currency_id = fields.Many2one(
         'res.currency',
         string='Moneda',
         default=lambda self: self.env.company.currency_id,
+        groups='levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager',
     )
 
     # Líneas de costos
@@ -104,12 +106,14 @@ class LevantamientoLineaLog(models.Model):
         'levantamiento.evento.costo',
         'log_id',
         string='Costos',
+        groups='levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager',
     )
     costo_total = fields.Float(
         string='Costo Total',
         compute='_compute_costo_total',
         store=True,
         digits=(10, 2),
+        groups='levantamiento_medidas.group_levantamiento_cost_user,levantamiento_medidas.group_levantamiento_manager',
     )
 
     # Fotos del evento
